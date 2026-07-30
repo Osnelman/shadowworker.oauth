@@ -1,2 +1,1 @@
-// Remplace CLIENT_ID par l'ID client OAuth 2.0 obtenu depuis Google Cloud Console
-export const GOOGLE_CLIENT_ID = linuxquest-504002
+export const GOOGLE_CLIENT_ID = "234350611890-a64uk207e220sp8na4ui0ct1es5uae0o.apps.googleusercontent.com"
