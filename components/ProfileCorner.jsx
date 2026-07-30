@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 
 export default function ProfileCorner() {
-  const { user, signOut } = useAuth()
+  const { user, signOut, signIn, googleAvailable } = useAuth()
   const [showMenu, setShowMenu] = useState(false)
   const menuRef = useRef(null)
 
@@ -19,7 +19,18 @@ export default function ProfileCorner() {
     }
   }, [showMenu])
 
-  if (!user || user.isGuest) return null
+  if (!user) return null
+
+  if (user.isGuest) {
+    if (!googleAvailable) return null
+    return (
+      <div className="profile-corner">
+        <button className="btn btn-primary" onClick={signIn} style={{ padding: '8px 16px', fontSize: '0.9rem' }}>
+          🔐 Se connecter avec Google
+        </button>
+      </div>
+    )
+  }
 
   return (
     <div className="profile-corner" ref={menuRef}>
