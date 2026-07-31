@@ -32,12 +32,12 @@ export default function Result() {
             className="btn btn-primary"
             onClick={() => {
               resetGame()
-              navigate('/')
+              navigate('/home')
             }}
           >
             Revenir à l’accueil
           </button>
-          <button className="btn btn-secondary" onClick={() => navigate('/')}>Voir mon tableau de bord</button>
+          <button className="btn btn-secondary" onClick={() => navigate('/home')}>Voir mon tableau de bord</button>
         </div>
       </section>
     </main>

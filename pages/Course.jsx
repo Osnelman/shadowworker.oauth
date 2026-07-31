@@ -100,7 +100,7 @@ export default function Course() {
           <button className="btn btn-primary" onClick={() => navigate(`/quiz/${lessonId}`)}>
             Tester mes connaissances
           </button>
-          <button className="btn btn-secondary" onClick={() => navigate('/')}>
+          <button className="btn btn-secondary" onClick={() => navigate('/home')}>
             Retour à l’accueil
           </button>
           {isSectionEnd && sectionId && (

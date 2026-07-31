@@ -19,7 +19,7 @@ export default function Progress() {
   return (
     <div className="page">
       <header className="page-header">
-        <button className="btn-back" onClick={() => navigate('/')}>← Retour</button>
+        <button className="btn-back" onClick={() => navigate('/home')}>← Retour</button>
         <h1>📊 Progression horaire</h1>
       </header>
 

@@ -83,6 +83,19 @@ function createEmailUser(email) {
   }
 }
 
+function renderGoogleButton() {
+  const container = document.getElementById('gsi-button')
+  if (!container || !window.google?.accounts?.id) return false
+
+  container.innerHTML = ''
+  window.google.accounts.id.renderButton(container, {
+    theme: 'outline',
+    size: 'large',
+    width: '100%',
+  })
+  return true
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [ready, setReady] = useState(false)
@@ -143,17 +156,10 @@ export function AuthProvider({ children }) {
         ux_mode: 'popup',
       })
 
-      // Render visible button if container present
+      // The login page may not be mounted yet (for example when the app opens
+      // on the home page), so Login also calls this when it mounts.
       try {
-        const container = document.getElementById('gsi-button')
-        if (container && window.google && window.google.accounts && window.google.accounts.id) {
-          container.innerHTML = ''
-          window.google.accounts.id.renderButton(container, {
-            theme: 'outline',
-            size: 'large',
-            width: '100%',
-          })
-        }
+        renderGoogleButton()
       } catch (e) {
         console.warn('GSI renderButton failed', e)
       }
@@ -227,7 +233,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, ready, googleAvailable, authError, gsiLoaded, reloadGoogle, signIn, signInWithEmail, signInGuest, signOut }}>
+    <AuthContext.Provider value={{ user, ready, googleAvailable, authError, gsiLoaded, reloadGoogle, renderGoogleButton, signIn, signInWithEmail, signInGuest, signOut }}>
       {children}
     </AuthContext.Provider>
   )

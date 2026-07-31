@@ -9,7 +9,7 @@ export default function NotFound() {
       <section className="card center-card">
         <h1>404</h1>
         <p className="muted">La page que tu cherches n’existe pas encore.</p>
-        <button className="btn btn-primary" onClick={() => navigate('/')}>Retour à l’accueil</button>
+        <button className="btn btn-primary" onClick={() => navigate('/home')}>Retour à l’accueil</button>
       </section>
     </main>
   )

@@ -14,7 +14,8 @@ export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<Login />} />
+      <Route path="/home" element={<Home />} />
       <Route path="/course/:lessonId" element={<Course />} />
       <Route path="/quiz/:lessonId" element={<Quiz />} />
       <Route path="/mission/:sectionId" element={<Mission />} />

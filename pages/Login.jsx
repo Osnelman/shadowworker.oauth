@@ -1,23 +1,27 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function Login() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
-  const { ready, googleAvailable, authError, signIn, signInWithEmail, signInGuest, reloadGoogle, user } = useAuth()
+  const { ready, googleAvailable, authError, signIn, signInWithEmail, signInGuest, reloadGoogle, renderGoogleButton, user } = useAuth()
 
-  // Si déjà connecté, rediriger vers accueil
-  if (ready && user && !user.isGuest) {
-    navigate('/')
-    return null
-  }
+  useEffect(() => {
+    if (ready && user && !user.isGuest) navigate('/home', { replace: true })
+  }, [navigate, ready, user])
+
+  useEffect(() => {
+    if (ready && googleAvailable) renderGoogleButton()
+  }, [googleAvailable, ready, renderGoogleButton])
+
+  if (ready && user && !user.isGuest) return null
 
   const handleEmailSubmit = (e) => {
     e.preventDefault()
     signInWithEmail(email)
     if (email && email.includes('@')) {
-      setTimeout(() => navigate('/'), 500)
+      setTimeout(() => navigate('/home'), 500)
     }
   }
 
@@ -101,7 +105,7 @@ export default function Login() {
           <p className="muted" style={{ fontSize: '0.85rem', marginBottom: 12 }}>
             Tu peux aussi continuer en mode invité (ta progression sera locale).
           </p>
-          <button className="btn btn-secondary" onClick={() => { signInGuest(); setTimeout(() => navigate('/'), 300); }} style={{ width: '100%', padding: '12px' }}>
+          <button className="btn btn-secondary" onClick={() => { signInGuest(); setTimeout(() => navigate('/home'), 300); }} style={{ width: '100%', padding: '12px' }}>
             👤 Continuer en mode invité
           </button>
         </div>

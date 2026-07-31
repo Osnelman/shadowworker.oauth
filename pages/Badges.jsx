@@ -11,7 +11,7 @@ export default function Badges() {
   return (
     <div className="page">
       <header className="page-header">
-        <button className="btn-back" onClick={() => navigate('/')}>← Retour</button>
+        <button className="btn-back" onClick={() => navigate('/home')}>← Retour</button>
         <h1>🏆 Mes Badges</h1>
       </header>
 
