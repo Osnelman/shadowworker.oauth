@@ -49,14 +49,6 @@ function saveUser(profile) {
   }
 }
 
-function clearSavedUser() {
-  try {
-    localStorage.removeItem(STORAGE_KEY)
-  } catch (e) {
-    console.warn('Failed to clear auth profile', e)
-  }
-}
-
 function loadGuestId() {
   try {
     let guestId = localStorage.getItem(GUEST_ID_KEY)
@@ -96,27 +88,39 @@ export function AuthProvider({ children }) {
   const [ready, setReady] = useState(false)
   const [googleAvailable, setGoogleAvailable] = useState(true)
   const [authError, setAuthError] = useState(null)
+  const [gsiLoaded, setGsiLoaded] = useState(false)
 
-  useEffect(() => {
-    const saved = loadSavedUser()
-    if (saved) {
-      setUser(saved)
-      setReady(true)
-    } else {
-      setUser(createGuestUser())
-    }
+  const initializeGsi = async () => {
+    try {
+      const saved = loadSavedUser()
+      if (saved) setUser(saved)
+      else setUser(createGuestUser())
 
-    if (!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID.includes('PASTE')) {
-      setGoogleAvailable(false)
-      setReady(true)
-      return
-    }
-
-    loadGsiScript().then((loaded) => {
-      if (!loaded || !window.google || !window.google.accounts || !window.google.accounts.id) {
+      if (!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID.includes('PASTE')) {
         setGoogleAvailable(false)
         setReady(true)
-        return
+        return false
+      }
+
+      // GSI requires HTTPS (except localhost)
+      try {
+        const isSecureOrigin = window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        if (!isSecureOrigin) {
+          setGoogleAvailable(false)
+          setAuthError('Google Identity requires HTTPS and a registered origin on the Google Console.')
+          setReady(true)
+          return false
+        }
+      } catch (e) {
+        // ignore
+      }
+
+      const ok = await loadGsiScript()
+      if (!ok || !window.google || !window.google.accounts || !window.google.accounts.id) {
+        setGoogleAvailable(false)
+        setAuthError('Le script Google ne s\u2019est pas chargé.')
+        setReady(true)
+        return false
       }
 
       window.google.accounts.id.initialize({
@@ -133,15 +137,57 @@ export function AuthProvider({ children }) {
             }
             setUser(userData)
             saveUser(userData)
-            setGoogleAvailable(true)
             setAuthError(null)
           }
         },
         ux_mode: 'popup',
       })
+
+      // Render visible button if container present
+      try {
+        const container = document.getElementById('gsi-button')
+        if (container && window.google && window.google.accounts && window.google.accounts.id) {
+          container.innerHTML = ''
+          window.google.accounts.id.renderButton(container, {
+            theme: 'outline',
+            size: 'large',
+            width: '100%',
+          })
+        }
+      } catch (e) {
+        console.warn('GSI renderButton failed', e)
+      }
+
       setReady(true)
-    })
+      setGoogleAvailable(true)
+      setGsiLoaded(true)
+      return true
+    } catch (e) {
+      console.warn('Google Identity initialization failed', e)
+      setGoogleAvailable(false)
+      setAuthError('Impossible d\u2019initialiser Google Identity')
+      setReady(true)
+      return false
+    }
+  }
+
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      await initializeGsi()
+      if (cancelled) return
+    })()
+    return () => {
+      cancelled = true
+    }
   }, [])
+
+  const reloadGoogle = async () => {
+    setAuthError(null)
+    setGoogleAvailable(false)
+    setGsiLoaded(false)
+    return await initializeGsi()
+  }
 
   const signIn = () => {
     if (!window.google || !window.google.accounts || !window.google.accounts.id) {
@@ -181,7 +227,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, ready, googleAvailable, authError, signIn, signInWithEmail, signInGuest, signOut }}>
+    <AuthContext.Provider value={{ user, ready, googleAvailable, authError, gsiLoaded, reloadGoogle, signIn, signInWithEmail, signInGuest, signOut }}>
       {children}
     </AuthContext.Provider>
   )
@@ -190,7 +236,7 @@ export function AuthProvider({ children }) {
 export function useAuth() {
   const context = useContext(AuthContext)
   if (context === undefined) {
-    throw new Error('useAuth doit être utilisé à l\'intérieur d\'un AuthProvider')
+    throw new Error("useAuth doit être utilisé à l'intérieur d'un AuthProvider")
   }
   return context
 }

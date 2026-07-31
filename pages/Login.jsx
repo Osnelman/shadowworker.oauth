@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext'
 export default function Login() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
-  const { ready, googleAvailable, authError, signIn, signInWithEmail, signInGuest, user } = useAuth()
+  const { ready, googleAvailable, authError, signIn, signInWithEmail, signInGuest, reloadGoogle, user } = useAuth()
 
   // Si déjà connecté, rediriger vers accueil
   if (ready && user && !user.isGuest) {
@@ -41,14 +41,38 @@ export default function Login() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {googleAvailable ? (
-            <button className="btn btn-primary" onClick={signIn} style={{ width: '100%', padding: '14px' }}>
-              🔐 Se connecter avec Google
-            </button>
+            <>
+              <div id="gsi-button" style={{ width: '100%' }} />
+              <button className="btn btn-primary" onClick={signIn} style={{ width: '100%', padding: '14px', display: 'none' }}>
+                🔐 Se connecter avec Google
+              </button>
+            </>
           ) : (
             <div style={{ padding: '14px', background: 'rgba(255, 179, 71, 0.05)', borderRadius: 10, color: '#cbd5e1', fontSize: '0.9rem' }}>
               Google indisponible. Utilise l'e-mail ci-dessous.
             </div>
           )}
+
+          {/* Diagnostic panel */}
+          <div style={{ marginTop: 12, textAlign: 'left', fontSize: '0.85rem', color: '#94a3b8' }}>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+              <strong style={{ color: '#cbd5e1' }}>Diagnostic :</strong>
+              <span>ready: {String(ready)}</span>
+              <span>googleAvailable: {String(googleAvailable)}</span>
+            </div>
+            {authError && <div style={{ color: '#fca5a5', marginBottom: 8 }}>{authError}</div>}
+            <div style={{ display: 'flex', gap: 8 }}>
+                <button className="btn btn-outline" onClick={() => { if (typeof window !== 'undefined' && window.location) window.location.reload() }}>
+                Rafraîchir la page
+              </button>
+              <button className="btn btn-outline" onClick={() => { reloadGoogle && reloadGoogle() }}>
+                Réessayer Google
+              </button>
+              <button className="btn btn-outline" onClick={() => { if (typeof window !== 'undefined') { const a = document.createElement('a'); a.href = 'https://accounts.google.com/gsi/client'; a.target = '_blank'; a.rel = 'noreferrer'; a.click() } }}>
+                Ouvrir script GSI
+              </button>
+            </div>
+          </div>
 
           <div style={{ position: 'relative', margin: '20px 0' }}>
             <div style={{ borderTop: '1px solid rgba(148, 163, 184, 0.2)' }} />

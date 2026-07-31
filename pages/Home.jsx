@@ -52,6 +52,9 @@ export default function Home() {
         <button className="btn btn-primary" onClick={() => navigate(`/course/${currentLesson}`)}>
           Commencer la leçon {currentLesson}
         </button>
+        <button className="btn btn-secondary" onClick={() => navigate('/login')} style={{ marginTop: 12 }}>
+          🔐 Se connecter / Gérer mon compte
+        </button>
         <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
           <button className="btn btn-secondary" onClick={() => navigate('/progress')} style={{ flex: 1 }}>
             📊 Progression
