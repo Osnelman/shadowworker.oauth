@@ -8,6 +8,7 @@ import Result from '../pages/Result'
 import Mission from '../pages/Mission'
 import Progress from '../pages/Progress'
 import Badges from '../pages/Badges'
+import DailyMission from '../pages/DailyMission'
 import NotFound from '../pages/NotFound'
 
 export default function AppRoutes() {
@@ -22,6 +23,7 @@ export default function AppRoutes() {
       <Route path="/result" element={<Result />} />
       <Route path="/progress" element={<Progress />} />
       <Route path="/badges" element={<Badges />} />
+      <Route path="/daily-mission" element={<DailyMission />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   )

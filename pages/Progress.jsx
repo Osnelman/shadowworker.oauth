@@ -2,10 +2,12 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGame } from '../context/GameContext'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import Lottie from 'lottie-react'
+import fireStreakAnimation from '../Fire Streak.json'
 
 export default function Progress() {
   const navigate = useNavigate()
-  const { progressHistory, xp } = useGame()
+  const { progressHistory, xp, loginStreak } = useGame()
 
   // Calcul de l'XP cumulé pour chaque point
   const chartData = progressHistory.map((item, index) => {
@@ -20,12 +22,17 @@ export default function Progress() {
     <div className="page">
       <header className="page-header">
         <button className="btn-back" onClick={() => navigate('/home')}>← Retour</button>
-        <h1>📊 Progression horaire</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <h1>📊 Ma progression</h1>
+          <div aria-hidden="true" style={{ width: 64, height: 64 }}>
+            <Lottie animationData={fireStreakAnimation} loop />
+          </div>
+        </div>
       </header>
 
       <main className="page-content">
         <div className="progress-card">
-          <h2>XP gagnés au cours du temps</h2>
+          <h2>Continue comme ça, chaque défi te rapproche du niveau suivant.</h2>
 
           {chartData.length === 0 ? (
             <p className="empty-state">Aucune progression enregistrée. Complète des quiz pour voir ta courbe !</p>
@@ -66,6 +73,10 @@ export default function Progress() {
                 <div className="stat-item">
                   <span className="stat-label">Moyenne XP/session :</span>
                   <span className="stat-value">⚡ {Math.round(xp / chartData.length)}</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-label">Série en cours :</span>
+                  <span className="stat-value">🔥 {loginStreak} jour{loginStreak > 1 ? 's' : ''}</span>
                 </div>
               </div>
             </>

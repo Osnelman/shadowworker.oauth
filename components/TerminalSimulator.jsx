@@ -276,11 +276,11 @@ export default function TerminalSimulator({ initialFiles = {}, expected = null, 
         break
 
       case 'help':
-        print('Commande fun: pwd ls ls -l mkdir mkdir -p rmdir cd cat touch echo rm rm -r mv cp tree find grep history clear chmod chown help')
+        print('Chaque défi contient les indices nécessaires. Relis l’objectif, puis essaie ta commande.')
         break
 
       default:
-        print(`'${cmd}' non reconnu. Tape help pour voir les commandes disponibles.`)
+        print(`« ${cmd} » ne correspond pas à ce défi. Relis l’objectif et essaie une autre commande.`)
     }
 
     // success check

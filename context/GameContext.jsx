@@ -1,5 +1,10 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useAuth } from './AuthContext'
+import firstStepBadge from '../icons8-premiere-96.png'
+import linuxBadge from '../icons8-linux-50.png'
+import trophyBadge from '../icons8-trophy-48.png'
+import missionBadge from '../icons8-mission-94.png'
+import targetBadge from '../icons8-bullseye-48.png'
 
 const GameContext = createContext()
 const TOTAL_LESSONS = 5
@@ -12,11 +17,29 @@ const DEFAULT_STATE = {
   completedMissions: [],
   progressHistory: [],
   unlockedBadges: [],
+  loginStreak: 0,
+  lastActiveDate: null,
 }
 
 const XP_PER_CORRECT_ANSWER = 50
 const XP_PER_MISSION = 220
+const XP_PER_DAILY_MISSION = 75
 const XP_FOR_LEVEL = 150
+
+function getLocalDayKey() {
+  const now = new Date()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  return `${now.getFullYear()}-${month}-${day}`
+}
+
+function getPreviousDayKey() {
+  const yesterday = new Date()
+  yesterday.setDate(yesterday.getDate() - 1)
+  const month = String(yesterday.getMonth() + 1).padStart(2, '0')
+  const day = String(yesterday.getDate()).padStart(2, '0')
+  return `${yesterday.getFullYear()}-${month}-${day}`
+}
 
 function computeRank(xp) {
   if (xp >= 900) return 'Linux Virtuose'
@@ -27,20 +50,21 @@ function computeRank(xp) {
 }
 
 const BADGES = [
-  { id: 'first-quiz', name: 'Premier pas', emoji: '👣', description: 'Complète ton premier quiz', img: '/badges_auto/file_2_r0_c0.png' },
-  { id: 'xp-100', name: 'Apprenti', emoji: '📚', description: 'Gagne 100 XP', img: '/badges_auto/file_2_r0_c1.png' },
-  { id: 'xp-250', name: 'Étudiant', emoji: '🎓', description: 'Gagne 250 XP', img: '/badges_auto/file_2_r0_c2.png' },
-  { id: 'xp-500', name: 'Expert', emoji: '🏆', description: 'Gagne 500 XP', img: '/badges_auto/file_2_r0_c3.png' },
-  { id: 'level-2', name: 'Niveau 2', emoji: '⬆️', description: 'Atteins le niveau 2', img: '/badges_auto/file_2_r1_c0.png' },
-  { id: 'level-3', name: 'Niveau 3', emoji: '⬆️⬆️', description: 'Atteins le niveau 3', img: '/badges_auto/file_2_r1_c1.png' },
-  { id: 'level-5', name: 'Niveau 5', emoji: '🚀', description: 'Atteins le niveau 5', img: '/badges_auto/file_2_r1_c2.png' },
-  { id: 'all-lessons', name: 'Complétiste', emoji: '✅', description: 'Complète les 5 leçons', img: '/badges_auto/file_2_r1_c3.png' },
-  { id: 'mission-master', name: 'Maître des missions', emoji: '⭐', description: 'Complète 3 missions', img: '/badges_auto/file_2_r2_c0.png' },
+  { id: 'first-quiz', name: 'Premier pas', emoji: '👣', icon: 'terminal', img: firstStepBadge, color: '#38bdf8', description: 'Complète ton premier quiz' },
+  { id: 'xp-100', name: 'Apprenti', emoji: '📚', icon: 'book', img: linuxBadge, color: '#22c55e', description: 'Gagne 100 XP' },
+  { id: 'xp-250', name: 'Étudiant', emoji: '🎓', icon: 'cap', color: '#a78bfa', description: 'Gagne 250 XP' },
+  { id: 'xp-500', name: 'Expert', emoji: '🏆', icon: 'trophy', img: trophyBadge, color: '#fbbf24', description: 'Gagne 500 XP' },
+  { id: 'level-2', name: 'Niveau 2', emoji: '⬆️', icon: 'chevron-one', color: '#fb923c', description: 'Atteins le niveau 2' },
+  { id: 'level-3', name: 'Niveau 3', emoji: '⬆️⬆️', icon: 'chevron-two', color: '#f97316', description: 'Atteins le niveau 3' },
+  { id: 'level-5', name: 'Niveau 5', emoji: '🚀', icon: 'rocket', color: '#ef4444', description: 'Atteins le niveau 5' },
+  { id: 'all-lessons', name: 'Complétiste', emoji: '✅', icon: 'shield', img: missionBadge, color: '#2dd4bf', description: 'Complète les 5 leçons' },
+  { id: 'mission-master', name: 'Maître des missions', emoji: '⭐', icon: 'target', img: targetBadge, color: '#ec4899', description: 'Complète 3 missions' },
+  { id: 'streak-7', name: 'Semaine de feu', emoji: '🔥', icon: 'flame', color: '#f97316', description: 'Reviens 7 jours d’affilée' },
 ]
 
 function checkBadges(state) {
   const newBadges = []
-  const { xp, completedLessons, completedMissions, unlockedBadges } = state
+  const { xp, completedLessons, completedMissions, unlockedBadges, loginStreak } = state
   const level = Math.max(1, Math.floor(xp / XP_FOR_LEVEL) + 1)
 
   // Badges XP
@@ -59,6 +83,7 @@ function checkBadges(state) {
 
   // Badges Missions
   if (completedMissions.length >= 3 && !unlockedBadges.includes('mission-master')) newBadges.push('mission-master')
+  if (loginStreak >= 7 && !unlockedBadges.includes('streak-7')) newBadges.push('streak-7')
 
   return newBadges
 }
@@ -73,16 +98,18 @@ export function GameProvider({ children }) {
   const [completedMissions, setCompletedMissions] = useState(DEFAULT_STATE.completedMissions)
   const [progressHistory, setProgressHistory] = useState(DEFAULT_STATE.progressHistory)
   const [unlockedBadges, setUnlockedBadges] = useState(DEFAULT_STATE.unlockedBadges)
+  const [loginStreak, setLoginStreak] = useState(DEFAULT_STATE.loginStreak)
+  const [lastActiveDate, setLastActiveDate] = useState(DEFAULT_STATE.lastActiveDate)
+  const [completedDailyMissionDate, setCompletedDailyMissionDate] = useState(null)
 
-  // Empêche la sauvegarde tant que le chargement du user courant n'est pas terminé
-  const isLoadedRef = useRef(false)
+  // Identifie l'utilisateur dont la progression est réellement chargée.
+  const [loadedUserId, setLoadedUserId] = useState(null)
 
   // Chargement de la progression quand l'utilisateur change
   useEffect(() => {
-    isLoadedRef.current = false
+    setLoadedUserId(null)
 
     if (!user) {
-      isLoadedRef.current = true
       return
     }
 
@@ -97,6 +124,10 @@ export function GameProvider({ children }) {
         setCompletedLessons(DEFAULT_STATE.completedLessons)
         setCompletedMissions(DEFAULT_STATE.completedMissions)
         setProgressHistory(DEFAULT_STATE.progressHistory)
+        setUnlockedBadges(DEFAULT_STATE.unlockedBadges)
+        setLoginStreak(1)
+        setLastActiveDate(getLocalDayKey())
+        setCompletedDailyMissionDate(null)
       } else {
         const data = JSON.parse(raw)
         setLives(data.lives ?? DEFAULT_STATE.lives)
@@ -106,6 +137,16 @@ export function GameProvider({ children }) {
         setCompletedMissions(Array.isArray(data.completedMissions) ? data.completedMissions : DEFAULT_STATE.completedMissions)
         setProgressHistory(Array.isArray(data.progressHistory) ? data.progressHistory : DEFAULT_STATE.progressHistory)
         setUnlockedBadges(Array.isArray(data.unlockedBadges) ? data.unlockedBadges : DEFAULT_STATE.unlockedBadges)
+        const today = getLocalDayKey()
+        const savedStreak = Number(data.loginStreak) || 0
+        const nextStreak = data.lastActiveDate === today
+          ? Math.max(1, savedStreak)
+          : data.lastActiveDate === getPreviousDayKey()
+            ? savedStreak + 1
+            : 1
+        setLoginStreak(nextStreak)
+        setLastActiveDate(today)
+        setCompletedDailyMissionDate(data.completedDailyMissionDate ?? null)
       }
     } catch (e) {
       console.warn('Failed to load progress', e)
@@ -116,15 +157,18 @@ export function GameProvider({ children }) {
       setCompletedMissions(DEFAULT_STATE.completedMissions)
       setProgressHistory(DEFAULT_STATE.progressHistory)
       setUnlockedBadges(DEFAULT_STATE.unlockedBadges)
+      setLoginStreak(1)
+      setLastActiveDate(getLocalDayKey())
+      setCompletedDailyMissionDate(null)
     }
 
-    isLoadedRef.current = true
+    setLoadedUserId(user.id)
   }, [user])
 
   // Sauvegarde : uniquement une fois le chargement terminé pour le user courant
   useEffect(() => {
     if (!user) return
-    if (!isLoadedRef.current) return
+    if (loadedUserId !== user.id) return
 
     const payload = {
       lives,
@@ -134,6 +178,9 @@ export function GameProvider({ children }) {
       completedMissions,
       progressHistory,
       unlockedBadges,
+      loginStreak,
+      lastActiveDate,
+      completedDailyMissionDate,
       updatedAt: Date.now(),
     }
     try {
@@ -141,7 +188,7 @@ export function GameProvider({ children }) {
     } catch (e) {
       console.warn('Failed to save progress', e)
     }
-  }, [user, lives, xp, currentLesson, completedLessons, completedMissions, progressHistory, unlockedBadges])
+  }, [user, loadedUserId, lives, xp, currentLesson, completedLessons, completedMissions, progressHistory, unlockedBadges, loginStreak, lastActiveDate, completedDailyMissionDate])
 
   const loseLife = () => setLives((prev) => Math.max(prev - 1, 0))
   const resetLives = () => setLives(3)
@@ -167,6 +214,17 @@ export function GameProvider({ children }) {
     setProgressHistory((prev) => [...prev, { time: timeStr, xp: XP_PER_MISSION }])
   }
 
+  const dailyMissionCompleted = completedDailyMissionDate === getLocalDayKey()
+  const completeDailyMission = () => {
+    if (dailyMissionCompleted) return false
+    setCompletedDailyMissionDate(getLocalDayKey())
+    setXp((prev) => prev + XP_PER_DAILY_MISSION)
+    const now = new Date()
+    const timeStr = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`
+    setProgressHistory((prev) => [...prev, { time: timeStr, xp: XP_PER_DAILY_MISSION }])
+    return true
+  }
+
   const resetGame = () => {
     setLives(DEFAULT_STATE.lives)
     setXp(DEFAULT_STATE.xp)
@@ -179,12 +237,12 @@ export function GameProvider({ children }) {
 
   // Check for new badges when game state changes
   useEffect(() => {
-    if (!isLoadedRef.current) return
-    const newBadges = checkBadges({ xp, completedLessons, completedMissions, unlockedBadges })
+    if (loadedUserId !== user?.id) return
+    const newBadges = checkBadges({ xp, completedLessons, completedMissions, unlockedBadges, loginStreak })
     if (newBadges.length > 0) {
       setUnlockedBadges((prev) => [...prev, ...newBadges])
     }
-  }, [xp, completedLessons, completedMissions, unlockedBadges])
+  }, [user, loadedUserId, xp, completedLessons, completedMissions, unlockedBadges, loginStreak])
 
   const level = Math.max(1, Math.floor(xp / XP_FOR_LEVEL) + 1)
   const xpToNextLevel = level * XP_FOR_LEVEL - xp
@@ -206,6 +264,8 @@ export function GameProvider({ children }) {
         completedMissions,
         progressHistory,
         unlockedBadges,
+        loginStreak,
+        dailyMissionCompleted,
         BADGES,
         loseLife,
         resetLives,
@@ -213,6 +273,7 @@ export function GameProvider({ children }) {
         advanceLesson,
         completeLesson,
         completeMission,
+        completeDailyMission,
         resetGame,
       }}
     >

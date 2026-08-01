@@ -6,8 +6,15 @@ export default function BadgeNotificationListener() {
   const { unlockedBadges, BADGES } = useGame()
   const { addNotification } = useNotification()
   const previousBadgesRef = useRef([])
+  const hasMountedRef = useRef(false)
 
   useEffect(() => {
+    if (!hasMountedRef.current) {
+      hasMountedRef.current = true
+      previousBadgesRef.current = unlockedBadges
+      return
+    }
+
     // Find newly unlocked badges
     const newBadges = unlockedBadges.filter(
       (id) => !previousBadgesRef.current.includes(id)

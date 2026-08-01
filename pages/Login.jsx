@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Lottie from 'lottie-react'
 import { useAuth } from '../context/AuthContext'
+import learningAnimation from '../Learning.json'
 
 export default function Login() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
-  const { ready, googleAvailable, authError, signIn, signInWithEmail, signInGuest, reloadGoogle, renderGoogleButton, user } = useAuth()
+  const { ready, googleAvailable, authError, signInWithEmail, signInGuest, renderGoogleButton, user } = useAuth()
 
   useEffect(() => {
     if (ready && user && !user.isGuest) navigate('/home', { replace: true })
@@ -28,7 +30,11 @@ export default function Login() {
   return (
     <main className="page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
       <section className="card login-card" style={{ maxWidth: 420, padding: '48px', textAlign: 'center' }}>
-        <div style={{ marginBottom: 32 }}>
+        <div aria-hidden="true" style={{ width: 180, height: 180, margin: '-32px auto 8px' }}>
+          <Lottie animationData={learningAnimation} loop />
+        </div>
+
+        <div style={{ marginBottom: 20 }}>
           <span className="badge" style={{ fontSize: '1.4rem', padding: '12px 24px' }}>🐧 Linux Quest</span>
         </div>
 
@@ -37,19 +43,10 @@ export default function Login() {
           Apprends Linux en t'amusant. Connecte-toi pour sauvegarder ta progression.
         </p>
 
-        {authError && (
-          <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: 12, padding: 12, marginBottom: 20, color: '#fca5a5' }}>
-            {authError}
-          </div>
-        )}
-
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {googleAvailable ? (
             <>
               <div id="gsi-button" style={{ width: '100%' }} />
-              <button className="btn btn-primary" onClick={signIn} style={{ width: '100%', padding: '14px', display: 'none' }}>
-                🔐 Se connecter avec Google
-              </button>
             </>
           ) : (
             <div style={{ padding: '14px', background: 'rgba(255, 179, 71, 0.05)', borderRadius: 10, color: '#cbd5e1', fontSize: '0.9rem' }}>
@@ -57,26 +54,11 @@ export default function Login() {
             </div>
           )}
 
-          {/* Diagnostic panel */}
-          <div style={{ marginTop: 12, textAlign: 'left', fontSize: '0.85rem', color: '#94a3b8' }}>
-            <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-              <strong style={{ color: '#cbd5e1' }}>Diagnostic :</strong>
-              <span>ready: {String(ready)}</span>
-              <span>googleAvailable: {String(googleAvailable)}</span>
+          {authError && (
+            <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: 12, padding: 12, color: '#fca5a5' }}>
+              La connexion Google est momentanément indisponible. Tu peux utiliser ton e-mail ou continuer en invité.
             </div>
-            {authError && <div style={{ color: '#fca5a5', marginBottom: 8 }}>{authError}</div>}
-            <div style={{ display: 'flex', gap: 8 }}>
-                <button className="btn btn-outline" onClick={() => { if (typeof window !== 'undefined' && window.location) window.location.reload() }}>
-                Rafraîchir la page
-              </button>
-              <button className="btn btn-outline" onClick={() => { reloadGoogle && reloadGoogle() }}>
-                Réessayer Google
-              </button>
-              <button className="btn btn-outline" onClick={() => { if (typeof window !== 'undefined') { const a = document.createElement('a'); a.href = 'https://accounts.google.com/gsi/client'; a.target = '_blank'; a.rel = 'noreferrer'; a.click() } }}>
-                Ouvrir script GSI
-              </button>
-            </div>
-          </div>
+          )}
 
           <div style={{ position: 'relative', margin: '20px 0' }}>
             <div style={{ borderTop: '1px solid rgba(148, 163, 184, 0.2)' }} />

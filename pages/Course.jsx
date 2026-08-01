@@ -66,11 +66,26 @@ export default function Course() {
   const { lessonId } = useParams()
   const lesson = lessons[lessonId] || lessons[1]
   const navigate = useNavigate()
-  const { setCurrentLesson } = useGame()
+  const { setCurrentLesson, completedLessons } = useGame()
+  const lessonNumber = Number(lessonId) || 1
+  const nextLesson = [1, 2, 3, 4, 5].find((id) => !completedLessons.includes(id)) || 5
 
   useEffect(() => {
-    setCurrentLesson(Number(lessonId) || 1)
-  }, [lessonId, setCurrentLesson])
+    if (lessonNumber <= nextLesson) setCurrentLesson(lessonNumber)
+  }, [lessonNumber, nextLesson, setCurrentLesson])
+
+  if (lessonNumber > nextLesson) {
+    return (
+      <main className="page course-page">
+        <section className="card center-card">
+          <span className="badge">Étape verrouillée</span>
+          <h1>Termine d’abord la leçon {nextLesson}</h1>
+          <p className="muted">Chaque étape terminée ouvre naturellement la suite de ton aventure.</p>
+          <button className="btn btn-primary" onClick={() => navigate(`/course/${nextLesson}`)}>Continuer l’aventure</button>
+        </section>
+      </main>
+    )
+  }
 
   // determine if this lesson is the end of a section that has a mission
   const sectionEntry = Object.entries(missions).find(([, s]) =>

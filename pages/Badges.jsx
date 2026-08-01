@@ -1,6 +1,9 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGame } from '../context/GameContext'
+import Lottie from 'lottie-react'
+import trophyAnimation from '../Trophy Badge award Animation.json'
+import BadgeIcon from '../components/BadgeIcon'
 
 export default function Badges() {
   const navigate = useNavigate()
@@ -21,19 +24,23 @@ export default function Badges() {
           Reviens ici après avoir progressé pour voir tes succès et savoir lequel débloquer ensuite.
         </p>
 
+        {unlockedBadges.length > 0 && (
+          <div aria-hidden="true" style={{ width: 130, height: 130, margin: '-16px auto 8px' }}>
+            <Lottie animationData={trophyAnimation} loop={false} />
+          </div>
+        )}
+
         <div className="badges-container">
           <div className="badges-grid">
             {BADGES.map((badge) => (
               <div
                 key={badge.id}
                 className={`badge-card ${unlockedSet.has(badge.id) ? 'unlocked' : 'locked'}`}
+                style={{ '--badge-color': badge.color }}
               >
-                <div className="badge-emoji">
-                  {badge.img ? (
-                    <img src={badge.img} alt={badge.name} className="badge-img" />
-                  ) : (
-                    badge.emoji
-                  )}
+                <div className="badge-emblem">
+                  {badge.img ? <img className="badge-image" src={badge.img} alt="" /> : <BadgeIcon type={badge.icon} />}
+                  {!unlockedSet.has(badge.id) && <span className="badge-lock">🔒</span>}
                 </div>
                 <h3>{badge.name}</h3>
                 <p className="badge-description">{badge.description}</p>

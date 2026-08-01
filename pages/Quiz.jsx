@@ -37,21 +37,18 @@ export default function Quiz() {
 
     if (correct) {
       addXp()
-      completeLesson(Number(lessonId))
       addNotification('⚡ +50 XP !', 'success', 2000)
     } else {
-      const newLives = Math.max(lives - 1, 0)
-      addNotification(`❤️ -1 Vie (${newLives} restantes)`, 'error', 2000)
+      const nextLives = Math.max(lives - 1, 0)
+      loseLife()
+      addNotification(`❤️ -1 Vie (${nextLives} restantes)`, 'error', 2000)
     }
 
     let willNavCourse = false
     if (!correct) {
-      const newLives = Math.max(lives - 1, 0)
-      if (newLives === 0) {
+      const nextLives = Math.max(lives - 1, 0)
+      if (nextLives === 0) {
         willNavCourse = true
-      } else {
-        // decrement lives in context
-        loseLife()
       }
     }
 
@@ -64,6 +61,7 @@ export default function Quiz() {
 
     if (lastCorrect) {
       if (isLastQuestion) {
+        completeLesson(Number(lessonId))
         resetLives()
         advanceLesson()
         navigate('/result')
@@ -106,10 +104,7 @@ export default function Quiz() {
             <div className="terminal-tip card" style={{ marginBottom: 16 }}>
               <h3 style={{ marginBottom: 8 }}>Défi terminal</h3>
               <p style={{ marginBottom: 8 }}>
-                Tape ta commande et appuie sur Entrée. Utilise <strong>help</strong> pour voir les commandes.
-              </p>
-              <p className="muted">
-                Commandes utiles : <strong>{current.commands?.join(' · ') || 'pwd · ls · cat · touch · mkdir · cd · rm · help'}</strong>
+                Lis l’objectif, tape ta réponse puis appuie sur Entrée. Prends ton temps : chaque essai t’aide à progresser.
               </p>
               <p className="muted" style={{ marginTop: 10 }}>
                 Le terminal reste visible après réussite, et tu auras une explication claire en dessous.
@@ -122,7 +117,6 @@ export default function Quiz() {
                 expected={current.expected}
                 onSuccess={() => {
                   addXp()
-                  completeLesson(Number(lessonId))
                   addNotification('⚡ Terminal : défi réussi +50 XP', 'success', 2500)
                   setShowExplanation(true)
                   setLastCorrect(true)
