@@ -104,7 +104,7 @@ const BADGES = [
 function checkBadges(state) {
   const newBadges = []
   const { xp, completedLessons, completedMissions, unlockedBadges, loginStreak } = state
-  const level = Math.max(1, Math.floor(xp / XP_FOR_LEVEL) + 1)
+  const level = Math.max(1, computeLevelFromXp(xp))
 
   // Badges XP
   if (xp >= 100 && !unlockedBadges.includes('xp-100')) newBadges.push('xp-100')
