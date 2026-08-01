@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function ProfileCorner() {
   const { user, signOut, signIn, googleAvailable } = useAuth()
+  const navigate = useNavigate()
   const [showMenu, setShowMenu] = useState(false)
   const menuRef = useRef(null)
 
@@ -21,16 +23,8 @@ export default function ProfileCorner() {
 
   if (!user) return null
 
-  if (user.isGuest) {
-    if (!googleAvailable) return null
-    return (
-      <div className="profile-corner">
-        <button className="btn btn-primary" onClick={signIn} style={{ padding: '8px 16px', fontSize: '0.9rem' }}>
-          🔐 Se connecter avec Google
-        </button>
-      </div>
-    )
-  }
+  // Do not show a persistent Google connect button in the page.
+  // The sign-in action is available from the profile menu or the dedicated Login page.
 
   return (
     <div className="profile-corner" ref={menuRef}>
@@ -87,9 +81,22 @@ export default function ProfileCorner() {
 
           <div className="profile-menu-divider" />
 
-          <button className="profile-menu-logout" onClick={signOut}>
-            👋 Déconnexion
-          </button>
+          {user.isGuest ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {googleAvailable && (
+                <button className="profile-menu-logout" onClick={signIn}>
+                  🔐 Se connecter avec Google
+                </button>
+              )}
+              <button className="profile-menu-logout" onClick={() => navigate('/login')}>
+                🔐 Page de connexion
+              </button>
+            </div>
+          ) : (
+            <button className="profile-menu-logout" onClick={signOut}>
+              👋 Déconnexion
+            </button>
+          )}
         </div>
       )}
     </div>
