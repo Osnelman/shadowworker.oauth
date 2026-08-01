@@ -94,7 +94,7 @@ export default function Login() {
           <p className="muted" style={{ fontSize: '0.85rem', marginBottom: 12 }}>
             Tu peux aussi continuer en mode invité (ta progression sera locale).
           </p>
-          <button className="btn btn-secondary" onClick={() => { signInGuest(); setTimeout(() => navigate('/home'), 300); }} style={{ width: '100%', padding: '12px' }}>
+          <button className="btn btn-secondary" onClick={() => { signInGuest(); navigate('/home') }} style={{ width: '100%', padding: '12px' }}>
             👤 Continuer en mode invité
           </button>
         </div>
