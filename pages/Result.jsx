@@ -1,6 +1,7 @@
 import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useGame } from '../context/GameContext'
+import { lessonIds } from '../data/lessons'
 import Lottie from 'lottie-react'
 import trophyAnimation from '../Trophy Badge award Animation.json'
 import fireworksAnimation from '../Fireworks.json'
@@ -9,7 +10,7 @@ export default function Result() {
   const navigate = useNavigate()
   const location = useLocation()
   const { xp, completedLessons } = useGame()
-  const fullCompletion = completedLessons.length >= 5
+  const fullCompletion = completedLessons.length >= lessonIds.length
   const isDailyMission = location.state?.source === 'daily-mission'
 
   return (

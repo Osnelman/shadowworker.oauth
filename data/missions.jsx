@@ -4,38 +4,59 @@ export const missions = {
     lessons: [1, 2],
     mission: {
       description:
-        "Crée un petit dépôt de travail : navigue entre dossiers, crée des fichiers, et supprime-les proprement.",
+        'Crée un dépôt de travail : découvre ta position, liste les fichiers, et manipule des dossiers et fichiers sans te perdre.',
       tasks: [
-        'Créer un dossier `workshop` avec `mkdir workshop`',
-        'Entrer dans le dossier et créer deux fichiers texte avec `touch`',
-        'Lister les fichiers avec `ls -la` et vérifier les permissions',
-        'Supprimer proprement les fichiers créés puis revenir au dossier parent',
+        'Vérifie ton répertoire courant avec `pwd`.',
+        'Liste le contenu du dossier avec `ls -l`.',
+        'Crée un dossier `workshop` puis un fichier `notes.txt`.',
+        'Supprime proprement le fichier créé et reviens au dossier parent.',
       ],
     },
   },
-  intermediate: {
-    title: 'Mission : Gestion et lecture de fichiers',
-    lessons: [3, 4],
+  security: {
+    title: 'Mission : Trouver le mot de passe caché',
+    lessons: [3],
     mission: {
       description:
-        "Lis et manipule des fichiers texte : utilise `cat`, `less`, et change les permissions pour un script simple.",
+        'Un mot de passe secret est caché dans un fichier invisible. Utilise les commandes Linux pour le trouver, puis saisis-le dans le champ prévu.',
       tasks: [
-        'Créer un script simple `hello.sh` contenant `echo "Hello"`',
-        'Rendre le script exécutable avec `chmod +x hello.sh` et l’exécuter',
-        'Afficher un fichier long avec `less` et rechercher une chaîne avec `/`',
+        'Liste les fichiers cachés avec `ls -a`.',
+        'Affiche le contenu du fichier caché en utilisant `cat`.',
+        'Mémorise le mot de passe et saisis-le dans le champ prévu.',
+      ],
+    },
+    challenge: {
+      initialFiles: {
+        '.secret': 'open-sesame',
+      },
+      expected: 'open-sesame',
+      hint: 'Le mot de passe est dans un fichier caché nommé `.secret`.',
+      prompt: 'Saisis ici le mot de passe trouvé dans le terminal pour valider la mission.',
+    },
+  },
+  permissions: {
+    title: 'Mission : Gestion avancée des permissions',
+    lessons: [4],
+    mission: {
+      description:
+        'Apprends à protéger un script et à gérer les droits d’accès sur les fichiers.',
+      tasks: [
+        'Crée un script `deploy.sh` avec `touch deploy.sh`.',
+        'Ajoute les droits d’exécution avec `chmod +x deploy.sh`.',
+        'Vérifie le mode et le propriétaire avec `ls -l deploy.sh`.',
       ],
     },
   },
-  advanced: {
+  search: {
     title: 'Mission : Recherche et productivité',
     lessons: [5],
     mission: {
       description:
-        "Améliore ta productivité en combinant `grep`, historique et redirections pour extraire des informations.",
+        'Utilise les commandes de recherche pour trouver rapidement des informations et automatiser ta recherche.',
       tasks: [
-        'Utiliser `grep -R` pour trouver un mot dans plusieurs fichiers',
-        'Utiliser `history` pour retrouver une commande utile et la ré-exécuter',
-        'Rediriger la sortie d’une commande vers un fichier avec `>` puis la consulter',
+        'Utilise `grep -R` pour trouver un mot dans les fichiers du dossier.',
+        'Consulte ton historique avec `history`.',
+        'Redirige la sortie d’une commande vers un fichier avec `>` puis affiche ce fichier.',
       ],
     },
   },

@@ -1,21 +1,32 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGame } from '../context/GameContext'
 import { useAuth } from '../context/AuthContext'
 import ProfileCorner from '../components/ProfileCorner'
+import { lessons, lessonIds } from '../data/lessons.jsx'
 
 export default function Home() {
   const navigate = useNavigate()
-  const { xp, level, levelProgress, rank, lives, completedLessons, dailyMissionCompleted, loginStreak } = useGame()
+  const { xp, level, levelProgress, rank, lives, completedLessons, dailyMissionCompleted, loginStreak, nextLifeAt, MAX_LIVES } = useGame()
   const { user } = useAuth()
-  const nextLesson = [1, 2, 3, 4, 5].find((id) => !completedLessons.includes(id)) || 5
-  const adventure = [
-    { id: 1, icon: '⌘', title: 'Les bases', text: 'Se repérer dans le terminal' },
-    { id: 2, icon: '◫', title: 'Fichiers', text: 'Créer et organiser' },
-    { id: 3, icon: '↗', title: 'Navigation', text: 'Se déplacer comme un pro' },
-    { id: 4, icon: '⌁', title: 'Permissions', text: 'Protéger ses fichiers' },
-    { id: 5, icon: '⌕', title: 'Recherche', text: 'Trouver l’information' },
-  ]
+  const nextLesson = lessonIds.find((id) => !completedLessons.includes(id)) || lessonIds[lessonIds.length - 1]
+  const [timeLeft, setTimeLeft] = useState(null)
+
+  useEffect(() => {
+    if (!nextLifeAt || lives >= MAX_LIVES) {
+      setTimeLeft(null)
+      return
+    }
+
+    const intervalId = setInterval(() => {
+      const remainingSeconds = Math.max(0, Math.round((nextLifeAt - Date.now()) / 1000))
+      const minutes = Math.floor(remainingSeconds / 60)
+      const seconds = remainingSeconds % 60
+      setTimeLeft(`${minutes}:${String(seconds).padStart(2, '0')}`)
+    }, 1000)
+
+    return () => clearInterval(intervalId)
+  }, [nextLifeAt, lives, MAX_LIVES])
 
   // Les invités peuvent accéder à Home aussi (ProfileCorner les affiche pas)
 
@@ -40,7 +51,7 @@ export default function Home() {
           </div>
           <div>
             <strong>❤️ {lives}</strong>
-            <p>Vies</p>
+            <p className="muted">{timeLeft ? `+1 dans ${timeLeft}` : 'Vies'}</p>
           </div>
           <div>
             <strong>{completedLessons.length}</strong>
@@ -58,11 +69,13 @@ export default function Home() {
           <p className="muted">{levelProgress}% vers le niveau suivant</p>
         </div>
         <button className="btn btn-primary" onClick={() => navigate(`/course/${nextLesson}`)}>
-          {completedLessons.length === 5 ? 'Revoir la dernière leçon' : `Continuer : leçon ${nextLesson}`}
+          {completedLessons.length === lessonIds.length ? 'Revoir la dernière leçon' : `Continuer : leçon ${nextLesson}`}
         </button>
-        <button className="btn btn-secondary" onClick={() => navigate('/login')} style={{ marginTop: 12 }}>
-          🔐 Se connecter / Gérer mon compte
-        </button>
+        {user?.isGuest && (
+          <button className="btn btn-secondary" onClick={() => navigate('/login')} style={{ marginTop: 12 }}>
+            🔐 Se connecter pour sauvegarder
+          </button>
+        )}
         <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
           <button className="btn btn-secondary" onClick={() => navigate('/progress')} style={{ flex: 1 }}>
             📊 Progression
@@ -96,11 +109,12 @@ export default function Home() {
         <p className="muted">Une étape à la fois : termine une leçon pour ouvrir la suivante.</p>
 
         <div className="adventure-map">
-          {adventure.map((step) => {
+          {Object.values(lessons).map((step, index) => {
             const completed = completedLessons.includes(step.id)
             const available = step.id <= nextLesson
+            const isAlt = index % 2 !== 0
             return (
-              <div key={step.id} className={`adventure-stop ${completed ? 'completed' : available ? 'available' : 'locked'}`}>
+              <div key={step.id} className={`adventure-stop ${completed ? 'completed' : available ? 'available' : 'locked'} ${isAlt ? 'alt' : ''}`}>
                 <button
                   className="adventure-node"
                   disabled={!available}
@@ -111,7 +125,7 @@ export default function Home() {
                 </button>
                 <div className="adventure-label">
                   <strong>{step.title}</strong>
-                  <small>{completed ? 'Terminé' : available ? step.text : 'À débloquer'}</small>
+                  <small>{completed ? 'Terminé' : available ? step.summary : 'À débloquer'}</small>
                 </div>
               </div>
             )

@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { quizzes } from '../data/quizzes'
 import { useGame } from '../context/GameContext'
 import { useNotification } from '../context/NotificationContext'
+import { useSound } from '../context/SoundContext'
 import TerminalSimulator from '../components/TerminalSimulator'
 
 export default function Quiz() {
@@ -15,6 +16,9 @@ export default function Quiz() {
     resetLives,
     advanceLesson,
     completeLesson,
+    nextLifeAt,
+    MAX_LIVES,
+    xp, // Pour détecter le gain d'XP et jouer le son
   } = useGame()
   const { addNotification } = useNotification()
 
@@ -23,6 +27,24 @@ export default function Quiz() {
   const [showExplanation, setShowExplanation] = useState(false)
   const [lastCorrect, setLastCorrect] = useState(null)
   const [willNavigateToCourse, setWillNavigateToCourse] = useState(false)
+  const { playSound } = useSound()
+  const [timeLeft, setTimeLeft] = useState(null)
+
+  useEffect(() => {
+    if (!nextLifeAt || lives >= MAX_LIVES) {
+      setTimeLeft(null)
+      return
+    }
+
+    const intervalId = setInterval(() => {
+      const remainingSeconds = Math.max(0, Math.round((nextLifeAt - Date.now()) / 1000))
+      const minutes = Math.floor(remainingSeconds / 60)
+      const seconds = remainingSeconds % 60
+      setTimeLeft(`${minutes}:${String(seconds).padStart(2, '0')}`)
+    }, 1000)
+
+    return () => clearInterval(intervalId)
+  }, [nextLifeAt, lives, MAX_LIVES])
 
   if (!questions.length) {
     return <div className="page card p-6 text-white">Aucun quiz disponible pour cette leçon.</div>
@@ -33,15 +55,18 @@ export default function Quiz() {
 
   const handleAnswer = (option) => {
     const correct = option === current.answer
+
     setLastCorrect(correct)
 
     if (correct) {
       addXp()
       addNotification('⚡ +50 XP !', 'success', 2000)
+      playSound('correct')
     } else {
       const nextLives = Math.max(lives - 1, 0)
       loseLife()
       addNotification(`❤️ -1 Vie (${nextLives} restantes)`, 'error', 2000)
+      playSound('incorrect')
     }
 
     let willNavCourse = false
@@ -96,7 +121,9 @@ export default function Quiz() {
             <p className="muted">Leçon {lessonId} · Question {index + 1}/{questions.length}</p>
             <h1>{current.question}</h1>
           </div>
-          <div className="badge">❤️ Vies : {lives}</div>
+          <div className="badge">
+            ❤️ Vies : {lives} {timeLeft && <span className="muted" style={{ fontSize: '0.8em', marginLeft: '4px' }}>(+1 dans {timeLeft})</span>}
+          </div>
         </div>
 
         {current.type === 'terminal' && (
@@ -117,6 +144,7 @@ export default function Quiz() {
                 expected={current.expected}
                 onSuccess={() => {
                   addXp()
+                playSound('correct')
                   addNotification('⚡ Terminal : défi réussi +50 XP', 'success', 2500)
                   setShowExplanation(true)
                   setLastCorrect(true)

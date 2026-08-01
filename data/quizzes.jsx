@@ -192,4 +192,30 @@ export const quizzes = {
         "`history | tail -n 10` montre les dix dernières commandes et `!!` ré-exécute la dernière commande.",
     },
   ],
+  6: [
+    {
+      question: 'Quelle commande liste les processus en cours d’exécution ?',
+      options: ['ps', 'ls', 'top'],
+      answer: 'ps',
+      explanation: '`ps` (process status) affiche les processus actifs. `ps aux` est une variation courante pour voir tous les processus de tous les utilisateurs.',
+    },
+    {
+      question: 'Pour voir les processus qui se mettent à jour en temps réel, quelle commande utiliser ?',
+      options: ['watch ps', 'top', 'htop'],
+      answer: 'top',
+      explanation: '`top` fournit une vue dynamique en temps réel des processus en cours d’exécution sur un système.',
+    },
+    {
+      question: 'Comment arrêter un processus en connaissant son PID (Process ID) ?',
+      options: ['stop PID', 'kill PID', 'rm PID'],
+      answer: 'kill PID',
+      explanation: 'La commande `kill` envoie un signal à un processus. Par défaut, elle envoie le signal TERM (terminate) pour demander au processus de s’arrêter.',
+    },
+    {
+      question: 'Vous voulez trouver le PID d’un processus nommé `nginx`. Quelle commande est la plus efficace ?',
+      options: ['ps aux | grep nginx', 'find nginx', 'which nginx'],
+      answer: 'ps aux | grep nginx',
+      explanation: '`ps aux` liste tous les processus, et le `|` (pipe) envoie cette liste à `grep` qui filtre les lignes contenant "nginx".',
+    },
+  ],
 }

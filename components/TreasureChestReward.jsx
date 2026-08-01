@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import Lottie from 'lottie-react'
 import treasureChestAnimation from '../treasure-chest.json'
+import { useSound } from '../context/SoundContext'
 
 export default function TreasureChestReward({ reward, onClose }) {
   const [isRevealed, setIsRevealed] = useState(false)
+  const { playSound } = useSound()
 
   useEffect(() => {
     if (!reward) return
     const timer = window.setTimeout(() => setIsRevealed(true), 600)
+    playSound('xp') // Ou un son spécifique pour le trésor
     return () => window.clearTimeout(timer)
   }, [reward])
 

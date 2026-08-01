@@ -81,6 +81,10 @@ export default function ProfileCorner() {
 
           <div className="profile-menu-divider" />
 
+          <button className="profile-menu-settings" onClick={() => navigate('/profile')}>
+            👤 Mon Profil
+          </button>
+
           <button className="profile-menu-settings" onClick={() => navigate('/settings')}>
             ⚙️ Paramètres
           </button>

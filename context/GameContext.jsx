@@ -1,16 +1,20 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { useAuth } from './AuthContext'
+import { lessonIds } from '../data/lessons'
 import firstStepBadge from '../icons8-premiere-96.png'
 import linuxBadge from '../icons8-linux-50.png'
+import { useSound } from './SoundContext'
 import trophyBadge from '../icons8-trophy-48.png'
 import missionBadge from '../icons8-mission-94.png'
 import targetBadge from '../icons8-bullseye-48.png'
 
 const GameContext = createContext()
-const TOTAL_LESSONS = 5
+const TOTAL_LESSONS = lessonIds.length
+const MAX_LIVES = 3
+const LIFE_REGEN_MINUTES = 10
 
 const DEFAULT_STATE = {
-  lives: 3,
+  lives: MAX_LIVES,
   xp: 0,
   currentLesson: 1,
   completedLessons: [],
@@ -19,6 +23,7 @@ const DEFAULT_STATE = {
   unlockedBadges: [],
   loginStreak: 0,
   lastActiveDate: null,
+  nextLifeAt: null,
 }
 
 const DEFAULT_LOOT_STATE = {
@@ -118,7 +123,7 @@ function checkBadges(state) {
 
   // Badges Leçons
   if (completedLessons.length > 0 && !unlockedBadges.includes('first-quiz')) newBadges.push('first-quiz')
-  if (completedLessons.length === 5 && !unlockedBadges.includes('all-lessons')) newBadges.push('all-lessons')
+  if (completedLessons.length === lessonIds.length && !unlockedBadges.includes('all-lessons')) newBadges.push('all-lessons')
 
   // Badges Missions
   if (completedMissions.length >= 3 && !unlockedBadges.includes('mission-master')) newBadges.push('mission-master')
@@ -145,6 +150,8 @@ export function GameProvider({ children }) {
   const [lootState, setLootState] = useState(DEFAULT_LOOT_STATE)
   const [xpMultiplier, setXpMultiplier] = useState(1)
   const [xpMultiplierExpiresAt, setXpMultiplierExpiresAt] = useState(null)
+  const [nextLifeAt, setNextLifeAt] = useState(null)
+  const { playSound } = useSound()
 
   // Identifie l'utilisateur dont la progression est réellement chargée.
   const [loadedUserId, setLoadedUserId] = useState(null)
@@ -162,7 +169,7 @@ export function GameProvider({ children }) {
 
       if (!raw) {
         // Nouvel utilisateur sans sauvegarde : on réinitialise explicitement
-        setLives(DEFAULT_STATE.lives)
+        setLives(MAX_LIVES)
         setXp(DEFAULT_STATE.xp)
         setCurrentLesson(DEFAULT_STATE.currentLesson)
         setCompletedLessons(DEFAULT_STATE.completedLessons)
@@ -175,9 +182,10 @@ export function GameProvider({ children }) {
         setLoginStreak(1)
         setLastActiveDate(getLocalDayKey())
         setCompletedDailyMissionDate(null)
+        setNextLifeAt(null)
       } else {
         const data = JSON.parse(raw)
-        setLives(data.lives ?? DEFAULT_STATE.lives)
+        setLives(data.lives ?? MAX_LIVES)
         setXp(data.xp ?? DEFAULT_STATE.xp)
         setCurrentLesson(data.currentLesson ?? DEFAULT_STATE.currentLesson)
         setCompletedLessons(Array.isArray(data.completedLessons) ? data.completedLessons : DEFAULT_STATE.completedLessons)
@@ -187,6 +195,7 @@ export function GameProvider({ children }) {
         setLootState(data.lootState || DEFAULT_LOOT_STATE)
         setXpMultiplier(data.xpMultiplier || 1)
         setXpMultiplierExpiresAt(data.xpMultiplierExpiresAt || null)
+        setNextLifeAt(data.nextLifeAt || null)
         const today = getLocalDayKey()
         const savedStreak = Number(data.loginStreak) || 0
         const nextStreak = data.lastActiveDate === today
@@ -200,7 +209,7 @@ export function GameProvider({ children }) {
       }
     } catch (e) {
       console.warn('Failed to load progress', e)
-      setLives(DEFAULT_STATE.lives)
+      setLives(MAX_LIVES)
       setXp(DEFAULT_STATE.xp)
       setCurrentLesson(DEFAULT_STATE.currentLesson)
       setCompletedLessons(DEFAULT_STATE.completedLessons)
@@ -213,6 +222,7 @@ export function GameProvider({ children }) {
       setLoginStreak(1)
       setLastActiveDate(getLocalDayKey())
       setCompletedDailyMissionDate(null)
+      setNextLifeAt(null)
     }
 
     setLoadedUserId(user.id)
@@ -237,6 +247,7 @@ export function GameProvider({ children }) {
       lootState,
       xpMultiplier,
       xpMultiplierExpiresAt,
+      nextLifeAt,
       updatedAt: Date.now(),
     }
     try {
@@ -244,7 +255,7 @@ export function GameProvider({ children }) {
     } catch (e) {
       console.warn('Failed to save progress', e)
     }
-  }, [user, loadedUserId, lives, xp, currentLesson, completedLessons, completedMissions, progressHistory, unlockedBadges, loginStreak, lastActiveDate, completedDailyMissionDate, lootState, xpMultiplier, xpMultiplierExpiresAt])
+  }, [user, loadedUserId, lives, xp, currentLesson, completedLessons, completedMissions, progressHistory, unlockedBadges, loginStreak, lastActiveDate, completedDailyMissionDate, lootState, xpMultiplier, xpMultiplierExpiresAt, nextLifeAt])
 
   useEffect(() => {
     if (!xpMultiplierExpiresAt) return
@@ -254,8 +265,45 @@ export function GameProvider({ children }) {
     }
   }, [xpMultiplierExpiresAt, xpMultiplier])
 
-  const loseLife = () => setLives((prev) => Math.max(prev - 1, 0))
-  const resetLives = () => setLives(3)
+  // Life regeneration timer
+  useEffect(() => {
+    if (lives >= MAX_LIVES) {
+      if (nextLifeAt) setNextLifeAt(null) // Clear timer if lives are full
+      return
+    }
+
+    if (!nextLifeAt) return // No timer running
+
+    const timer = setInterval(() => {
+      if (Date.now() >= nextLifeAt) {
+        setLives(prev => {
+          const newLives = Math.min(prev + 1, MAX_LIVES)
+          if (newLives < MAX_LIVES) {
+            // Set timer for the next life
+            setNextLifeAt(Date.now() + LIFE_REGEN_MINUTES * 60 * 1000)
+          } else {
+            // Lives are full, stop the timer
+            setNextLifeAt(null)
+          }
+          return newLives
+        })
+      }
+    }, 1000) // Check every second
+
+    return () => clearInterval(timer)
+  }, [lives, nextLifeAt])
+
+  const loseLife = () => setLives((prev) => {
+    const newLives = Math.max(prev - 1, 0)
+    if (newLives < MAX_LIVES && !nextLifeAt) {
+      setNextLifeAt(Date.now() + LIFE_REGEN_MINUTES * 60 * 1000)
+    }
+    return newLives
+  })
+  const resetLives = () => {
+    setLives(MAX_LIVES)
+    setNextLifeAt(null)
+  }
   const addXp = (value = XP_PER_COMMAND, source = 'général') => {
     if (value <= 0) return
 
@@ -272,6 +320,7 @@ export function GameProvider({ children }) {
 
     if (newLevel > oldLevel) {
       setLevelUpEvent({ oldLevel, newLevel, xpGained: effectiveValue })
+      playSound('levelUp')
     }
   }
   const advanceLesson = () => setCurrentLesson((prev) => Math.min(prev + 1, TOTAL_LESSONS))
@@ -360,7 +409,7 @@ export function GameProvider({ children }) {
   }
 
   const resetGame = () => {
-    setLives(DEFAULT_STATE.lives)
+    setLives(MAX_LIVES)
     setXp(DEFAULT_STATE.xp)
     setCurrentLesson(DEFAULT_STATE.currentLesson)
     setCompletedLessons(DEFAULT_STATE.completedLessons)
@@ -369,6 +418,7 @@ export function GameProvider({ children }) {
     setUnlockedBadges(DEFAULT_STATE.unlockedBadges)
     setRecentXpGain(0)
     setLevelUpEvent(null)
+    setNextLifeAt(null)
   }
 
   const clearLevelUpEvent = () => {
@@ -404,6 +454,8 @@ export function GameProvider({ children }) {
         levelUpEvent,
         clearLevelUpEvent,
         lootState,
+        nextLifeAt,
+        MAX_LIVES,
         xpMultiplier,
         currentLesson,
         setCurrentLesson,
