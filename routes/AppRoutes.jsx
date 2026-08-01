@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import Home from '../pages/Home'
 import Login from '../pages/Login'
 import Course from '../pages/Course'
@@ -9,7 +9,6 @@ import Mission from '../pages/Mission'
 import Progress from '../pages/Progress'
 import Badges from '../pages/Badges'
 import DailyMission from '../pages/DailyMission'
-import NotFound from '../pages/NotFound'
 
 export default function AppRoutes() {
   return (
@@ -24,7 +23,7 @@ export default function AppRoutes() {
       <Route path="/progress" element={<Progress />} />
       <Route path="/badges" element={<Badges />} />
       <Route path="/daily-mission" element={<DailyMission />} />
-      <Route path="*" element={<NotFound />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   )
 }

@@ -7,14 +7,18 @@ import learningAnimation from '../Learning.json'
 export default function Login() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
-  const { ready, googleAvailable, authError, signInWithEmail, signInGuest, renderGoogleButton, user } = useAuth()
+  const [googleRenderFailed, setGoogleRenderFailed] = useState(false)
+  const { ready, googleAvailable, authError, signInWithEmail, signInGuest, renderGoogleButton, signIn, user } = useAuth()
 
   useEffect(() => {
     if (ready && user && !user.isGuest) navigate('/home', { replace: true })
   }, [navigate, ready, user])
 
   useEffect(() => {
-    if (ready && googleAvailable) renderGoogleButton()
+    if (ready && googleAvailable) {
+      const rendered = renderGoogleButton()
+      setGoogleRenderFailed(!rendered)
+    }
   }, [googleAvailable, ready, renderGoogleButton])
 
   if (ready && user && !user.isGuest) return null
@@ -22,9 +26,6 @@ export default function Login() {
   const handleEmailSubmit = (e) => {
     e.preventDefault()
     signInWithEmail(email)
-    if (email && email.includes('@')) {
-      setTimeout(() => navigate('/home'), 500)
-    }
   }
 
   return (
@@ -45,18 +46,24 @@ export default function Login() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {googleAvailable ? (
-            <>
-              <div id="gsi-button" style={{ width: '100%' }} />
-            </>
+            <div className="google-login-zone">
+              <div id="gsi-button" className="google-button-container" />
+              {googleRenderFailed && (
+                <button className="google-login-button" type="button" onClick={signIn}>
+                  <img src="https://www.svgrepo.com/show/354043/google.svg" alt="Google" />
+                  Se connecter avec Google
+                </button>
+              )}
+            </div>
           ) : (
-            <div style={{ padding: '14px', background: 'rgba(255, 179, 71, 0.05)', borderRadius: 10, color: '#cbd5e1', fontSize: '0.9rem' }}>
+            <div className="google-unavailable-note">
               Google indisponible. Utilise l'e-mail ci-dessous.
             </div>
           )}
 
           {authError && (
             <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: 12, padding: 12, color: '#fca5a5' }}>
-              La connexion Google est momentanément indisponible. Tu peux utiliser ton e-mail ou continuer en invité.
+              {authError}
             </div>
           )}
 

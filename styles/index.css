@@ -942,3 +942,50 @@ button:focus,
   font-weight: 600;
   letter-spacing: -0.5px;
 }
+
+.google-login-zone {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.google-button-container,
+.google-login-button {
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
+}
+
+.google-login-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #ffffff 0%, #f4f7fb 100%);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  padding: 14px 18px;
+  color: #111827;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.google-login-button img {
+  width: 20px;
+  height: 20px;
+}
+
+.google-login-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 20px 46px rgba(15, 23, 42, 0.22);
+  background: #ffffff;
+}
+
+.google-unavailable-note {
+  padding: 14px;
+  background: rgba(255, 179, 71, 0.08);
+  border-radius: 12px;
+  color: #cbd5e1;
+  font-size: 0.95rem;
+}
