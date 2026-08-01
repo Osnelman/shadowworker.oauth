@@ -81,6 +81,10 @@ export default function ProfileCorner() {
 
           <div className="profile-menu-divider" />
 
+          <button className="profile-menu-settings" onClick={() => navigate('/settings')}>
+            ⚙️ Paramètres
+          </button>
+
           {user.isGuest ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {googleAvailable && (

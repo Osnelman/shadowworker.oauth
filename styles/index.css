@@ -17,6 +17,37 @@
   font-synthesis: none;
 }
 
+/* Light theme overrides */
+:root[data-theme="light"] {
+  --text: #0f172a;
+  --muted: #475569;
+  --surface: #ffffff;
+  --amber: #ffb347;
+  --amber-dark: #d18a00;
+  background: #f8fafc;
+}
+
+/* Smooth transition for theme changes */
+html[data-theme], body[data-theme], :root[data-theme] {
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.btn[aria-pressed="true"] {
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+  opacity: 0.95;
+}
+
+.profile-menu-settings {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font-weight: 600;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;

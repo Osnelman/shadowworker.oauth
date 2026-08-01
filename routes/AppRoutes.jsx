@@ -9,6 +9,7 @@ import Mission from '../pages/Mission'
 import Progress from '../pages/Progress'
 import Badges from '../pages/Badges'
 import DailyMission from '../pages/DailyMission'
+import Settings from '../pages/Settings'
 
 export default function AppRoutes() {
   return (
@@ -23,6 +24,7 @@ export default function AppRoutes() {
       <Route path="/progress" element={<Progress />} />
       <Route path="/badges" element={<Badges />} />
       <Route path="/daily-mission" element={<DailyMission />} />
+      <Route path="/settings" element={<Settings />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   )
