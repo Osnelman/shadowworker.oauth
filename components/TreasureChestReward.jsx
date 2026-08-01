@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Lottie from 'lottie-react'
-import treasureChestAnimation from '../treasure chest(1).json'
+import treasureChestAnimation from '../treasure-chest.json'
 
 export default function TreasureChestReward({ reward, onClose }) {
   const [isRevealed, setIsRevealed] = useState(false)
