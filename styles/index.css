@@ -1020,3 +1020,50 @@ button:focus,
   color: #cbd5e1;
   font-size: 0.95rem;
 }
+
+.treasure-reward-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  padding: 24px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.16), rgba(15, 23, 42, 0.96));
+  border: 1px solid rgba(251, 191, 36, 0.32);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.24);
+}
+
+.treasure-animation-wrap {
+  width: 180px;
+  height: 180px;
+}
+
+.treasure-reward-content {
+  text-align: center;
+  opacity: 0.7;
+  transition: opacity 0.35s ease;
+}
+
+.treasure-reward-content.revealed {
+  opacity: 1;
+}
+
+.treasure-reward-content h3 {
+  color: #fef3c7;
+  margin-bottom: 6px;
+}
+
+.treasure-reward-content p {
+  color: #e2e8f0;
+  margin-bottom: 12px;
+}
+
+.treasure-reward-badge {
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.16);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #bbf7d0;
+  font-weight: 700;
+}

@@ -21,10 +21,49 @@ const DEFAULT_STATE = {
   lastActiveDate: null,
 }
 
-const XP_PER_CORRECT_ANSWER = 50
-const XP_PER_MISSION = 220
-const XP_PER_DAILY_MISSION = 75
-const XP_FOR_LEVEL = 150
+const DEFAULT_LOOT_STATE = {
+  lastReward: null,
+  history: [],
+}
+
+const XP_PER_COMMAND = 10
+const XP_PER_MISSION = 40
+const XP_PER_DAILY_MISSION = 25
+const XP_LEVEL_BASE = 100
+const XP_LEVEL_EXPONENT = 1.5
+
+function getXpForLevel(level) {
+  return Math.round(XP_LEVEL_BASE * Math.pow(level, XP_LEVEL_EXPONENT))
+}
+
+function computeLevelFromXp(totalXp) {
+  let level = 1
+  let remaining = totalXp
+
+  while (remaining >= getXpForLevel(level)) {
+    remaining -= getXpForLevel(level)
+    level += 1
+  }
+
+  return level
+}
+
+function getXpIntoCurrentLevel(totalXp) {
+  let level = 1
+  let remaining = totalXp
+
+  while (remaining >= getXpForLevel(level)) {
+    remaining -= getXpForLevel(level)
+    level += 1
+  }
+
+  return remaining
+}
+
+function getXpToNextLevel(totalXp) {
+  const level = computeLevelFromXp(totalXp)
+  return getXpForLevel(level) - getXpIntoCurrentLevel(totalXp)
+}
 
 function getLocalDayKey() {
   const now = new Date()
@@ -101,6 +140,11 @@ export function GameProvider({ children }) {
   const [loginStreak, setLoginStreak] = useState(DEFAULT_STATE.loginStreak)
   const [lastActiveDate, setLastActiveDate] = useState(DEFAULT_STATE.lastActiveDate)
   const [completedDailyMissionDate, setCompletedDailyMissionDate] = useState(null)
+  const [recentXpGain, setRecentXpGain] = useState(0)
+  const [levelUpEvent, setLevelUpEvent] = useState(null)
+  const [lootState, setLootState] = useState(DEFAULT_LOOT_STATE)
+  const [xpMultiplier, setXpMultiplier] = useState(1)
+  const [xpMultiplierExpiresAt, setXpMultiplierExpiresAt] = useState(null)
 
   // Identifie l'utilisateur dont la progression est réellement chargée.
   const [loadedUserId, setLoadedUserId] = useState(null)
@@ -125,6 +169,9 @@ export function GameProvider({ children }) {
         setCompletedMissions(DEFAULT_STATE.completedMissions)
         setProgressHistory(DEFAULT_STATE.progressHistory)
         setUnlockedBadges(DEFAULT_STATE.unlockedBadges)
+        setLootState(DEFAULT_LOOT_STATE)
+        setXpMultiplier(1)
+        setXpMultiplierExpiresAt(null)
         setLoginStreak(1)
         setLastActiveDate(getLocalDayKey())
         setCompletedDailyMissionDate(null)
@@ -137,6 +184,9 @@ export function GameProvider({ children }) {
         setCompletedMissions(Array.isArray(data.completedMissions) ? data.completedMissions : DEFAULT_STATE.completedMissions)
         setProgressHistory(Array.isArray(data.progressHistory) ? data.progressHistory : DEFAULT_STATE.progressHistory)
         setUnlockedBadges(Array.isArray(data.unlockedBadges) ? data.unlockedBadges : DEFAULT_STATE.unlockedBadges)
+        setLootState(data.lootState || DEFAULT_LOOT_STATE)
+        setXpMultiplier(data.xpMultiplier || 1)
+        setXpMultiplierExpiresAt(data.xpMultiplierExpiresAt || null)
         const today = getLocalDayKey()
         const savedStreak = Number(data.loginStreak) || 0
         const nextStreak = data.lastActiveDate === today
@@ -157,6 +207,9 @@ export function GameProvider({ children }) {
       setCompletedMissions(DEFAULT_STATE.completedMissions)
       setProgressHistory(DEFAULT_STATE.progressHistory)
       setUnlockedBadges(DEFAULT_STATE.unlockedBadges)
+      setLootState(DEFAULT_LOOT_STATE)
+      setXpMultiplier(1)
+      setXpMultiplierExpiresAt(null)
       setLoginStreak(1)
       setLastActiveDate(getLocalDayKey())
       setCompletedDailyMissionDate(null)
@@ -181,6 +234,9 @@ export function GameProvider({ children }) {
       loginStreak,
       lastActiveDate,
       completedDailyMissionDate,
+      lootState,
+      xpMultiplier,
+      xpMultiplierExpiresAt,
       updatedAt: Date.now(),
     }
     try {
@@ -188,15 +244,35 @@ export function GameProvider({ children }) {
     } catch (e) {
       console.warn('Failed to save progress', e)
     }
-  }, [user, loadedUserId, lives, xp, currentLesson, completedLessons, completedMissions, progressHistory, unlockedBadges, loginStreak, lastActiveDate, completedDailyMissionDate])
+  }, [user, loadedUserId, lives, xp, currentLesson, completedLessons, completedMissions, progressHistory, unlockedBadges, loginStreak, lastActiveDate, completedDailyMissionDate, lootState, xpMultiplier, xpMultiplierExpiresAt])
+
+  useEffect(() => {
+    if (!xpMultiplierExpiresAt) return
+    if (Date.now() > xpMultiplierExpiresAt) {
+      setXpMultiplier(1)
+      setXpMultiplierExpiresAt(null)
+    }
+  }, [xpMultiplierExpiresAt, xpMultiplier])
 
   const loseLife = () => setLives((prev) => Math.max(prev - 1, 0))
   const resetLives = () => setLives(3)
-  const addXp = (value = XP_PER_CORRECT_ANSWER) => {
-    setXp((prev) => prev + value)
+  const addXp = (value = XP_PER_COMMAND, source = 'général') => {
+    if (value <= 0) return
+
     const now = new Date()
     const timeStr = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`
-    setProgressHistory((prev) => [...prev, { time: timeStr, xp: value }])
+    const effectiveValue = Math.round(value * xpMultiplier)
+    const oldLevel = computeLevelFromXp(xp)
+    const newTotalXp = xp + effectiveValue
+    const newLevel = computeLevelFromXp(newTotalXp)
+
+    setXp(newTotalXp)
+    setRecentXpGain(effectiveValue)
+    setProgressHistory((prev) => [...prev, { time: timeStr, xp: effectiveValue, source }])
+
+    if (newLevel > oldLevel) {
+      setLevelUpEvent({ oldLevel, newLevel, xpGained: effectiveValue })
+    }
   }
   const advanceLesson = () => setCurrentLesson((prev) => Math.min(prev + 1, TOTAL_LESSONS))
 
@@ -206,22 +282,80 @@ export function GameProvider({ children }) {
     )
   }
 
+  const grantLootReward = () => {
+    const roll = Math.random()
+    let reward = {
+      type: 'none',
+      amount: 0,
+      label: 'Rien de spécial',
+      message: 'Le coffre est vide. Reviens bientôt pour une nouvelle chance.',
+    }
+
+    if (roll < 0.5) {
+      const amount = 10 + Math.floor(Math.random() * 21)
+      reward = {
+        type: 'xp',
+        amount,
+        label: `+${amount} XP bonus`,
+        message: `Tu as trouvé ${amount} XP bonus dans le coffre.`,
+      }
+    } else if (roll < 0.8) {
+      reward = {
+        type: 'none',
+        amount: 0,
+        label: 'Rien de spécial',
+        message: 'Le coffre est vide. Reviens bientôt pour une nouvelle chance.',
+      }
+    } else if (roll < 0.95) {
+      reward = {
+        type: 'badge',
+        amount: 0,
+        label: 'Badge rare débloqué',
+        message: 'Le coffre contenait un badge rare. Un nouveau succès vient d’être ajouté.',
+      }
+    } else {
+      reward = {
+        type: 'multiplier',
+        amount: 2,
+        label: 'Multiplicateur XP x2 · 30 min',
+        message: 'Tu as débloqué un multiplicateur XP x2 pendant 30 minutes.',
+      }
+    }
+
+    if (reward.type === 'xp') {
+      addXp(reward.amount, 'loot')
+    } else if (reward.type === 'badge') {
+      setUnlockedBadges((prev) => (prev.includes('treasure-chest') ? prev : [...prev, 'treasure-chest']))
+    } else if (reward.type === 'multiplier') {
+      setXpMultiplier(2)
+      setXpMultiplierExpiresAt(Date.now() + 30 * 60 * 1000)
+    }
+
+    const nextReward = {
+      ...reward,
+      createdAt: Date.now(),
+    }
+
+    setLootState((prev) => ({
+      lastReward: nextReward,
+      history: [nextReward, ...prev.history].slice(0, 8),
+    }))
+
+    return nextReward
+  }
+
   const completeMission = (sectionId) => {
+    if (completedMissions.includes(sectionId)) return null
     setCompletedMissions((prev) => (prev.includes(sectionId) ? prev : [...prev, sectionId]))
-    setXp((prev) => prev + XP_PER_MISSION)
-    const now = new Date()
-    const timeStr = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`
-    setProgressHistory((prev) => [...prev, { time: timeStr, xp: XP_PER_MISSION }])
+    addXp(XP_PER_MISSION, 'mission')
+    return grantLootReward()
   }
 
   const dailyMissionCompleted = completedDailyMissionDate === getLocalDayKey()
   const completeDailyMission = () => {
     if (dailyMissionCompleted) return false
     setCompletedDailyMissionDate(getLocalDayKey())
-    setXp((prev) => prev + XP_PER_DAILY_MISSION)
-    const now = new Date()
-    const timeStr = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`
-    setProgressHistory((prev) => [...prev, { time: timeStr, xp: XP_PER_DAILY_MISSION }])
+    addXp(XP_PER_DAILY_MISSION, 'daily-mission')
     return true
   }
 
@@ -233,6 +367,12 @@ export function GameProvider({ children }) {
     setCompletedMissions(DEFAULT_STATE.completedMissions)
     setProgressHistory(DEFAULT_STATE.progressHistory)
     setUnlockedBadges(DEFAULT_STATE.unlockedBadges)
+    setRecentXpGain(0)
+    setLevelUpEvent(null)
+  }
+
+  const clearLevelUpEvent = () => {
+    setLevelUpEvent(null)
   }
 
   // Check for new badges when game state changes
@@ -244,9 +384,11 @@ export function GameProvider({ children }) {
     }
   }, [user, loadedUserId, xp, completedLessons, completedMissions, unlockedBadges, loginStreak])
 
-  const level = Math.max(1, Math.floor(xp / XP_FOR_LEVEL) + 1)
-  const xpToNextLevel = level * XP_FOR_LEVEL - xp
-  const levelProgress = Math.round(((xp % XP_FOR_LEVEL) / XP_FOR_LEVEL) * 100)
+  const level = computeLevelFromXp(xp)
+  const xpIntoCurrentLevel = getXpIntoCurrentLevel(xp)
+  const xpToNextLevel = getXpToNextLevel(xp)
+  const currentLevelThreshold = getXpForLevel(level)
+  const levelProgress = currentLevelThreshold > 0 ? Math.round((xpIntoCurrentLevel / currentLevelThreshold) * 100) : 0
   const rank = computeRank(xp)
 
   return (
@@ -258,6 +400,11 @@ export function GameProvider({ children }) {
         xpToNextLevel,
         levelProgress,
         rank,
+        recentXpGain,
+        levelUpEvent,
+        clearLevelUpEvent,
+        lootState,
+        xpMultiplier,
         currentLesson,
         setCurrentLesson,
         completedLessons,
