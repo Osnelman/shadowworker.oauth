@@ -59,10 +59,14 @@ body,
 #root {
   min-height: 100%;
   width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 body {
   min-height: 100vh;
+  width: 100vw;
+  overflow-x: hidden;
   background-color: #04070d;
   background-image:
     radial-gradient(circle at top, rgba(255, 179, 71, 0.08), transparent 26%),
@@ -111,6 +115,29 @@ code {
 .page {
   min-height: 100vh;
   padding: 40px 20px;
+  width: 100%;
+  max-width: 100vw;
+}
+
+img,
+svg,
+iframe,
+video,
+canvas,
+picture {
+  max-width: 100%;
+  width: auto;
+  height: auto;
+}
+
+body,
+button,
+input,
+textarea,
+select,
+label {
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .hero {
@@ -455,6 +482,28 @@ button:focus,
   .adventure-map::before { top: 7%; bottom: 7%; left: 50%; right: auto; width: 3px; height: auto; background: repeating-linear-gradient(180deg, rgba(124, 255, 98, 0.55) 0 12px, transparent 12px 20px); }
   .adventure-stop { display: grid; grid-template-columns: 76px 1fr; align-items: center; gap: 15px; text-align: left; }
   .adventure-node { margin: 0; }
+
+  .profile-corner {
+    right: 12px;
+    top: 12px;
+  }
+
+  .profile-corner-menu {
+    width: min(100vw - 24px, 280px);
+    right: 12px;
+    left: auto;
+  }
+
+  .notification-center {
+    right: 12px;
+    left: auto;
+    top: 12px;
+  }
+
+  .page-header {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
 }
 
 /* Explanation box and mission card styles */
