@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 
-// Enhanced in-memory filesystem and command parser for terminal challenges
-export default function TerminalSimulator({ initialFiles = {}, expected = null, onSuccess = () => {}, prompt = 'linux-quest$' }) {
+export default function TerminalSimulator({ initialFiles = {}, expected = null, onSuccess = () => {}, onFailure = () => {}, validate = null, expectedCommand = null, prompt = 'linux-quest$' }) {
   const [cwd, setCwd] = useState('/')
   const [fs, setFs] = useState(() => {
     const store = { '/': { type: 'dir', children: {} } }
@@ -17,6 +16,7 @@ export default function TerminalSimulator({ initialFiles = {}, expected = null, 
   ])
   const [input, setInput] = useState('')
   const [cmdHistory, setCmdHistory] = useState([])
+  const [isSolved, setIsSolved] = useState(false)
   const inputRef = useRef(null)
 
   useEffect(() => { inputRef.current?.focus() }, [])
@@ -284,12 +284,29 @@ export default function TerminalSimulator({ initialFiles = {}, expected = null, 
     }
 
     // success check
-    setTimeout(() => {
-      const outputs = history.concat([{ type: 'cmd', text: line }])
-      const outText = outputs.map((o) => o.text).join('\n')
-      const filesText = Object.entries(fs).map(([k, v]) => `${k}:${v.type === 'file' ? v.content : '[dir]'}`).join('\n')
-      if (expected && (outText.includes(expected) || filesText.includes(expected))) onSuccess()
-    }, 80)
+    setTimeout(() => { // Delay to allow output to render
+      let success = false;
+      if (validate) {
+        // Use the custom validate function if provided
+        success = validate(line, history.map(h => h.text).join('\n'), fs);
+      } else if (expectedCommand) {
+        // Fallback to simple command match if expectedCommand is provided
+        success = line.trim().startsWith(expectedCommand.trim());
+      } else if (expected) {
+        // Fallback to checking output/files for expected string
+        const outputs = history.concat([{ type: 'cmd', text: line }]);
+        const outText = outputs.map((o) => o.text).join('\n');
+        const filesText = Object.entries(fs).map(([k, v]) => `${k}:${v.type === 'file' ? v.content : '[dir]'}`).join('\n');
+        success = outText.includes(expected) || filesText.includes(expected);
+      }
+
+      if (success) {
+        setIsSolved(true);
+        onSuccess();
+      } else {
+        onFailure(); // Call onFailure if not successful
+      }
+    }, 100); // A slightly longer delay to ensure all output is processed
   }
 
   const submit = (e) => {
@@ -302,12 +319,13 @@ export default function TerminalSimulator({ initialFiles = {}, expected = null, 
     <div className="terminal card">
       <div className="terminal-screen">
         {history.map((h, i) => (
-          <div key={i} className={h.type === 'cmd' ? 'term-cmd' : 'term-out'}>{h.text}</div>
+          <div key={i} className={h.type === 'cmd' ? 'term-cmd' : 'term-out'} dangerouslySetInnerHTML={{ __html: h.text }} />
         ))}
       </div>
       <form onSubmit={submit} className="terminal-input">
         <span className="prompt">{prompt}</span>
         <input
+          disabled={isSolved}
           ref={inputRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}

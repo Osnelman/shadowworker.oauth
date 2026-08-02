@@ -64,7 +64,6 @@ export default function Quiz() {
   useEffect(() => {
     setIndex(0);
     setAttemptCount(0);
-    setIncorrectOptions([]);
     // Removed incorrectOptions state as it's QCM specific
     setShowExplanation(false);
     setLastCorrect(null);

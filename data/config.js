@@ -1,0 +1,1 @@
+export const PREMIUM_AMOUNT = 2000; // Montant en FCFA pour le déblocage premium à vie

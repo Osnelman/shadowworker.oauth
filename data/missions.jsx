@@ -60,6 +60,7 @@ export const missions = {
       ],
     },
   },
+  // Nouvelle mission pour la leçon 6 (Gestion des processus)
   process_management: {
     title: 'Mission : Maîtrise des processus',
     lessons: [6],
@@ -67,14 +68,15 @@ export const missions = {
       description: 'Identifie et gère les programmes en cours d\'exécution sur ton système Linux.',
       tasks: [
         'Liste tous les processus en cours avec `ps aux`.',
-        'Trouve le PID d\'un processus spécifique (simulé).',
-        'Arrête un processus (simulé).',
+        'Trouve le PID d\'un processus spécifique (simulé, ex: `ps aux | grep nginx`).',
+        'Arrête un processus (simulé, ex: `kill PID`).',
       ],
     },
   },
+  // Nouvelle mission pour la leçon 7 (Gestion des utilisateurs et groupes)
   users: {
     title: 'Mission : Administrateur des utilisateurs',
-    lessons: [7], // Updated to new lesson ID
+    lessons: [7],
     mission: {
       description: 'Gère les utilisateurs et les groupes pour sécuriser l\'accès à votre système.',
       tasks: [
@@ -84,9 +86,10 @@ export const missions = {
       ],
     },
   },
+  // Nouvelle mission pour la leçon 8 (Gestion des paquets APT)
   package_management: {
     title: 'Mission : Gestionnaire de paquets',
-    lessons: [8], // Updated to new lesson ID
+    lessons: [8],
     mission: {
       description: 'Installe, met à jour et supprime des logiciels sur votre système.',
       tasks: [
@@ -96,9 +99,10 @@ export const missions = {
       ],
     },
   },
+  // Nouvelle mission pour la leçon 9 (Tâches planifiées avec Cron et At)
   archive: {
     title: 'Mission : Archivage et compression',
-    lessons: [13], // Updated to new lesson ID
+    lessons: [13],
     mission: {
       description: 'Compresse et archive des fichiers pour optimiser l\'espace et les transferts.',
       tasks: [
@@ -108,9 +112,10 @@ export const missions = {
       ],
     },
   },
+  // Nouvelle mission pour la leçon 10 (Connexions sécurisées avec SSH)
   automation: {
     title: 'Mission : Automatisation des tâches',
-    lessons: [9], // Updated to new lesson ID
+    lessons: [9],
     mission: {
       description: 'Planifie des commandes pour qu\'elles s\'exécutent automatiquement.',
       tasks: [
@@ -120,9 +125,10 @@ export const missions = {
       ],
     },
   },
+  // Nouvelle mission pour la leçon 11 (Réseau de base et diagnostic)
   text_processing: {
     title: 'Mission : Maître du traitement de texte',
-    lessons: [14], // Updated to new lesson ID
+    lessons: [14],
     mission: {
       description: 'Utilise `sed` et `awk` pour manipuler et extraire des informations de fichiers texte.',
       tasks: [
@@ -132,6 +138,7 @@ export const missions = {
       ],
     },
   },
+  // Nouvelle mission pour la leçon 12 (Analyse et surveillance des journaux)
   ssh_remote: {
     title: 'Mission : Accès distant sécurisé',
     lessons: [10],
@@ -144,6 +151,7 @@ export const missions = {
       ],
     },
   },
+  // Nouvelle mission pour la leçon 13 (Archivage et compression de données)
   network_basics: {
     title: 'Mission : Fondamentaux du réseau',
     lessons: [11],
@@ -156,6 +164,7 @@ export const missions = {
       ],
     },
   },
+  // Nouvelle mission pour la leçon 14 (Traitement de texte avancé avec Sed et Awk)
   logs_monitoring: {
     title: 'Mission : Analyse des journaux',
     lessons: [12], // Updated to new lesson ID
@@ -168,21 +177,23 @@ export const missions = {
       ],
     },
   },
+  // Nouvelle mission pour la leçon 15 (Maîtrise des services Systemd)
   systemd_services: {
     title: 'Mission : Maîtrise des services système',
     lessons: [15],
     mission: {
-      description: 'Installe, met à jour et supprime des logiciels sur votre système.',
+      description: 'Gère les services et processus de démarrage de ton système Linux.',
       tasks: [
-        'Mets à jour la liste des paquets.',
-        'Installe un paquet fictif `my-app` (simulé).',
-        'Supprime le paquet `my-app`.',
+        'Vérifie le statut du service `nginx` (simulé, ex: `systemctl status nginx`).',
+        'Démarre le service `apache2` (simulé, ex: `systemctl start apache2`).',
+        'Active le service `mysql` pour qu\'il démarre au boot (simulé, ex: `systemctl enable mysql`).',
       ],
     },
   },
+  // Nouvelle mission pour la leçon 16 (Gestion de l'espace disque et des systèmes de fichiers)
   disk_management: {
     title: 'Mission : Gestion de l\'espace disque',
-    lessons: [16], // Updated to new lesson ID
+    lessons: [16],
     mission: {
       description: 'Gère l\'espace disque et comprends l\'organisation des systèmes de fichiers.',
       tasks: [
@@ -192,9 +203,10 @@ export const missions = {
       ],
     },
   },
+  // Nouvelle mission pour la leçon 17 (Permissions avancées et Sudo)
   advanced_permissions: {
     title: 'Mission : Sécurisation avancée',
-    lessons: [17], // Updated to new lesson ID
+    lessons: [17],
     mission: {
       description: 'Applique des permissions numériques et utilise `sudo` de manière sécurisée.',
       tasks: [
@@ -204,6 +216,7 @@ export const missions = {
       ],
     },
   },
+  // Nouvelle mission pour la leçon 18 (Sécurité réseau et reconnaissance)
   network_security_recon: {
     title: 'Mission : Reconnaissance et sécurité réseau',
     lessons: [18], // New mission for lesson 18
@@ -216,6 +229,7 @@ export const missions = {
       ],
     },
   },
+  // Nouvelle mission pour la leçon 19 (Archivage avancé et synchronisation)
   advanced_archive_sync: {
     title: 'Mission : Archivage avancé et synchronisation',
     lessons: [19], // New mission for lesson 19
@@ -227,51 +241,16 @@ export const missions = {
       ],
     },
   },
+  // Nouvelle mission pour la leçon 20 (Scripting Bash avancé)
   bash_scripting: {
     title: 'Mission : Scripting Bash avancé',
     lessons: [20], // New mission for lesson 20
     mission: {
-      description: 'Gère les services et processus de démarrage de ton système Linux.',
+      description: 'Écris des scripts Bash complexes pour automatiser des tâches d\'administration système.',
       tasks: [
-        'Vérifie le statut du service `nginx` (simulé).',
-        'Démarre le service `apache2` (simulé).',
-        'Active le service `mysql` pour qu\'il démarre au boot (simulé).',
-      ],
-    },
-  },
-  logs_monitoring: {
-    title: 'Mission : Analyse des journaux',
-    lessons: [17],
-    mission: {
-      description: 'Apprends à lire et surveiller les logs pour diagnostiquer les problèmes système.',
-      tasks: [
-        'Surveille les logs système en temps réel (simulé).',
-        'Affiche les messages du noyau.',
-        'Filtre les logs pour trouver les erreurs (simulé).',
-      ],
-    },
-  },
-  disk_management: {
-    title: 'Mission : Gestion de l\'espace disque',
-    lessons: [18],
-    mission: {
-      description: 'Gère l\'espace disque et comprends l\'organisation des systèmes de fichiers.',
-      tasks: [
-        'Affiche l\'espace disque utilisé de manière lisible.',
-        'Vérifie la taille d\'un dossier spécifique.',
-        'Liste les périphériques de bloc.',
-      ],
-    },
-  },
-  advanced_permissions: {
-    title: 'Mission : Sécurisation avancée',
-    lessons: [19],
-    mission: {
-      description: 'Applique des permissions numériques et utilise `sudo` de manière sécurisée.',
-      tasks: [
-        'Crée un fichier et donne-lui les permissions `700`.',
-        'Vérifie les permissions du fichier.',
-        'Exécute une commande avec `sudo` (simulé).',
+        'Déclare une variable et affiche sa valeur.',
+        'Utilise une condition `if` pour vérifier l\'existence d\'un fichier.',
+        'Crée une boucle `for` simple.',
       ],
     },
   },

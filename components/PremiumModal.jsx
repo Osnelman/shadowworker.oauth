@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { usePremium } from '../context/PremiumContext';
 import { useNotification } from '../context/NotificationContext';
+import { PREMIUM_AMOUNT } from '../data/config'; // Import the centralized amount
 import Kkiapay from 'kkiapay-react';
 
 export default function PremiumModal({ onClose }) {
@@ -13,7 +14,6 @@ export default function PremiumModal({ onClose }) {
 
   const KKIAPAY_PUBLIC_KEY = import.meta.env.VITE_KKIAPAY_PUBLIC_KEY;
   const KKIAPAY_SANDBOX = import.meta.env.VITE_KKIAPAY_SANDBOX === 'true';
-  const PREMIUM_AMOUNT = 1000; // Example amount in XOF
 
   const handleKkiapaySuccess = async (response) => {
     setPaymentProcessing(true);
@@ -66,7 +66,7 @@ export default function PremiumModal({ onClose }) {
           <li>✅ Contenu exclusif régulièrement ajouté</li>
         </ul>
         <p style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '20px' }}>
-          Prix : {PREMIUM_AMOUNT} XOF (paiement unique)
+      Prix : {PREMIUM_AMOUNT} FCFA (paiement unique à vie)
         </p>
 
         {paymentError && (

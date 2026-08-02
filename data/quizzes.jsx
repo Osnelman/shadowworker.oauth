@@ -4,9 +4,7 @@ export const quizzes = {
   1: [
     {
       type: 'terminal',
-      question: 'Quelle commande affiche le dossier courant ?',
-      explanation:
-        "`pwd` (print working directory) affiche le chemin absolu du répertoire où vous vous trouvez. Utile pour savoir votre position avant d'exécuter des commandes affectant des fichiers.",
+      question: 'Quelle commande affiche le dossier courant ?', // This is a conceptual question, no validation needed for terminal
     },
     {
       type: 'terminal',
@@ -60,9 +58,7 @@ export const quizzes = {
   2: [
     {
       type: 'terminal',
-      question: 'Quelle commande crée un dossier ?',
-      explanation: "`mkdir nom_dossier` crée un répertoire. Pour créer des arborescences, utilisez `mkdir -p parent/enfant`.",
-      validate: (typedCommand, output, fs) => {
+      question: 'Quelle commande crée un dossier ?', explanation: "`mkdir nom_dossier` crée un répertoire. Pour créer des arborescences, utilisez `mkdir -p parent/enfant`.", validate: (typedCommand, output, fs) => {
         const { cmd, args } = parseCommand(typedCommand);
         return cmd === 'mkdir' && args.length > 0 && fsEntryExists(fs, `/${args[0]}`, 'dir');
       },
@@ -70,9 +66,7 @@ export const quizzes = {
     },
     {
       type: 'terminal',
-      question: 'Comment supprimer un fichier ?',
-      explanation: "`rm fichier` supprime un fichier. Attention : c'est définitif (sauf avec des sauvegardes). Pour supprimer des dossiers, utilisez `rm -r`.",
-      initialFiles: { 'file_to_delete.txt': '' },
+      question: 'Comment supprimer un fichier ?', explanation: "`rm fichier` supprime un fichier. Attention : c'est définitif (sauf avec des sauvegardes). Pour supprimer des dossiers, utilisez `rm -r`.", initialFiles: { 'file_to_delete.txt': '' },
       validate: (typedCommand, output, fs) => {
         const { cmd, args } = parseCommand(typedCommand);
         return cmd === 'rm' && args.includes('file_to_delete.txt') && !fsEntryExists(fs, '/file_to_delete.txt');
@@ -80,10 +74,7 @@ export const quizzes = {
       expectedCommand: 'rm file_to_delete.txt',
     },
     {
-      explanation: "`mkdir -p` crée tous les dossiers manquants dans l’arborescence. Pratique pour gagner du temps et éviter des erreurs.",
-      type: 'terminal',
-      question: 'Marc veut créer un dossier `projet` et un sous-dossier `code` en une seule fois. Tape la commande correcte.',
-      initialFiles: {},
+      explanation: "`mkdir -p` crée tous les dossiers manquants dans l’arborescence. Pratique pour gagner du temps et éviter des erreurs.", type: 'terminal', question: 'Marc veut créer un dossier `projet` et un sous-dossier `code` en une seule fois. Tape la commande correcte.', initialFiles: {},
       validate: (typedCommand, output, fs) => {
         return matchesCommand(typedCommand, 'mkdir -p projet/code') && fsEntryExists(fs, '/projet/code', 'dir');
       },
@@ -91,16 +82,12 @@ export const quizzes = {
         "`mkdir -p` crée tous les dossiers manquants dans l’arborescence. Pratique pour gagner du temps et éviter des erreurs.",
     },
     {
-      explanation: "`touch fichier` crée un fichier vide si celui-ci n’existe pas déjà, ou met à jour sa date de modification.",
-      type: 'terminal',
-      question: 'Une fois dans `documents`, tape la commande qui crée un fichier vide `note.txt`.',
-      initialFiles: {},
+      explanation: "`touch fichier` crée un fichier vide si celui-ci n’existe pas déjà, ou met à jour sa date de modification.", type: 'terminal', question: 'Une fois dans `documents`, tape la commande qui crée un fichier vide `note.txt`.', initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'touch note.txt') && fsEntryExists(fs, '/note.txt', 'file'),
       expectedCommand: 'touch note.txt',
         "`touch fichier` crée un fichier vide si celui-ci n’existe pas déjà, ou met à jour sa date de modification.",
     },
     {
-      explanation: "`rm -r dossier` supprime le dossier et son contenu récursivement. `rmdir` ne fonctionne que si le dossier est vide.",
       type: 'terminal',
       question: 'Tu dois supprimer un dossier appelé `old_project` et tous ses fichiers. Tape la commande que tu utilises.',
       initialFiles: { 'old_project/file.txt': '' },
@@ -109,7 +96,7 @@ export const quizzes = {
       },
       expectedCommand: 'rm -r old_project',
         "`rm -r dossier` supprime le dossier et son contenu récursivement. `rmdir` ne fonctionne que si le dossier est vide.",
-    // Example terminal-style challenge (lightweight)
+    },
     {
       type: 'terminal',
       question: 'Crée un fichier `note.txt` dans le dossier courant en utilisant la ligne de commande.',
@@ -124,14 +111,11 @@ export const quizzes = {
   3: [
     {
       type: 'terminal',
-      question: 'Quelle commande change le dossier courant ?',
-      explanation: "`cd chemin` vous déplace vers un autre répertoire. `cd ..` remonte d'un niveau et `cd -` revient au précédent.",
+      question: 'Quelle commande change le dossier courant ?', explanation: "`cd chemin` vous déplace vers un autre répertoire. `cd ..` remonte d'un niveau et `cd -` revient au précédent.",
     },
     {
       type: 'terminal',
       question: 'Comment afficher le contenu d’un fichier texte ?',
-      options: ['cat', 'grep', 'chmod'],
-      answer: 'cat',
       explanation: "`cat fichier` affiche le contenu. Pour des fichiers longs, préférez `less` ou `more` pour naviguer page par page.",
       initialFiles: { 'test.txt': 'hello' },
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'cat test.txt') && output.includes('hello'),
@@ -181,25 +165,18 @@ export const quizzes = {
   4: [
     {
       type: 'terminal',
-      question: 'Quelle commande montre les permissions d’un fichier ? ',
-      explanation: "`ls -l` affiche les permissions, le propriétaire et le groupe. Les permissions se lisent comme `rwx` pour read/write/execute.",
-      initialFiles: { 'file.txt': '' },
+      question: 'Quelle commande montre les permissions d’un fichier ? ', explanation: "`ls -l` affiche les permissions, le propriétaire et le groupe. Les permissions se lisent comme `rwx` pour read/write/execute.", initialFiles: { 'file.txt': '' },
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'ls -l file.txt') && output.includes('-rw-r--r--'),
       expectedCommand: 'ls -l file.txt',
     },
     {
       type: 'terminal',
-      question: 'Comment modifier les permissions pour être exécutable ?',
-      explanation: "`chmod +x fichier` ajoute la permission exécutable sans changer les autres permissions. Évitez `chmod 777` car il donne trop de droits.",
-      initialFiles: { 'script.sh': '' },
+      question: 'Comment modifier les permissions pour être exécutable ?', explanation: "`chmod +x fichier` ajoute la permission exécutable sans changer les autres permissions. Évitez `chmod 777` car il donne trop de droits.", initialFiles: { 'script.sh': '' },
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'chmod +x script.sh'), // Simulator doesn't show permissions change directly
       expectedCommand: 'chmod +x script.sh',
     },
     {
-      type: 'terminal',
       question: 'Tu veux donner au groupe la permission de lecture sur un fichier. Quelle commande est adaptée ?',
-      options: ['chmod g+r fichier', 'chmod o+r fichier', 'chmod u+r fichier'],
-      answer: 'chmod g+r fichier',
       explanation:
       initialFiles: { 'file.txt': '' },
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'chmod g+r file.txt'),
@@ -207,10 +184,7 @@ export const quizzes = {
         "`chmod g+r fichier` ajoute la permission de lecture au groupe sans toucher aux autres droits.",
     },
     {
-      type: 'terminal',
       question: 'Quelle commande affiche le propriétaire et le groupe d’un fichier ?',
-      options: ['ls -l', 'chmod -v', 'stat'],
-      answer: 'ls -l',
       explanation:
       initialFiles: { 'file.txt': '' },
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'ls -l file.txt') && output.includes('user group'),
@@ -218,10 +192,7 @@ export const quizzes = {
         "`ls -l` montre déjà le propriétaire et le groupe. Pour plus de détails, on peut aussi utiliser `stat fichier`.",
     },
     {
-      type: 'terminal',
       question: 'Alice veut rendre un script exécutable uniquement pour elle. Quelle commande doit-elle utiliser ?',
-      options: ['chmod u+x script.sh', 'chmod a+x script.sh', 'chmod 777 script.sh'],
-      answer: 'chmod u+x script.sh',
       explanation:
       initialFiles: { 'script.sh': '' },
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'chmod u+x script.sh'),
@@ -231,10 +202,7 @@ export const quizzes = {
   ],
   5: [
     {
-      type: 'terminal',
       question: 'Quelle commande recherche un mot-clé dans un fichier ?',
-      options: ['find', 'grep', 'awk'],
-      answer: 'grep',
       explanation: "`grep 'mot' fichier` recherche les lignes contenant 'mot'. Combinez avec `-r` pour rechercher dans les dossiers.",
       initialFiles: { 'test.txt': 'hello world' },
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'grep hello test.txt') && output.includes('hello world'),
@@ -243,8 +211,6 @@ export const quizzes = {
     {
       type: 'terminal',
       question: 'Comment afficher l’historique des commandes ?',
-      options: ['history', 'top', 'date'],
-      answer: 'history',
       explanation: "`history` liste les commandes précédemment exécutées. Utilise `!n` pour ré-exécuter la commande numéro n ou `!!` pour la dernière.",
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'history') && output.includes('1  history'),
@@ -277,10 +243,7 @@ export const quizzes = {
   ],
   6: [
     {
-      type: 'terminal',
       question: 'Quelle commande liste les processus en cours d’exécution ?',
-      options: ['ps', 'ls', 'top'],
-      answer: 'ps',
       explanation: '`ps` (process status) affiche les processus actifs. `ps aux` est une variation courante pour voir tous les processus de tous les utilisateurs.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'ps') && output.includes('ps'),
@@ -289,8 +252,6 @@ export const quizzes = {
     {
       type: 'terminal',
       question: 'Pour voir les processus qui se mettent à jour en temps réel, quelle commande utiliser ?',
-      options: ['watch ps', 'top', 'htop'],
-      answer: 'top',
       explanation: '`top` fournit une vue dynamique en temps réel des processus en cours d’exécution sur un système.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'top'),
@@ -299,8 +260,6 @@ export const quizzes = {
     {
       type: 'terminal',
       question: 'Comment arrêter un processus en connaissant son PID (Process ID) ?',
-      options: ['stop PID', 'kill PID', 'rm PID'],
-      answer: 'kill PID',
       explanation: 'La commande `kill` envoie un signal à un processus. Par défaut, elle envoie le signal TERM (terminate) pour demander au processus de s’arrêter.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'kill 1234'), // Any PID
@@ -308,10 +267,7 @@ export const quizzes = {
     },
     {
       question: 'Vous voulez trouver le PID d’un processus nommé `nginx`. Quelle commande est la plus efficace ?',
-      options: ['ps aux | grep nginx', 'find nginx', 'which nginx'],
-      answer: 'ps aux | grep nginx',
-      explanation: '`ps aux` liste tous les processus, et le `|` (pipe) envoie cette liste à `grep` qui filtre les lignes contenant "nginx".',
-      type: 'terminal',
+      explanation: '`ps aux` liste tous les processus. Dans un vrai terminal, on utiliserait un pipe avec `grep` pour filtrer : `ps aux | grep nginx`.', type: 'terminal',
       question: 'Vous voulez trouver le PID d’un processus nommé `nginx`. Tape la commande la plus efficace (le simulateur ne supporte pas les pipes, donc simule la recherche).',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'ps aux') && output.includes('nginx'), // Simplified for simulator
@@ -320,11 +276,9 @@ export const quizzes = {
     },
   ],
   9: [
-    {
+    { // This was lesson 7, now it's lesson 9
       type: 'terminal',
       question: 'Quelle commande permet de créer un nouvel utilisateur ?',
-      options: ['adduser', 'useradd', 'mkuser'],
-      answer: 'useradd',
       explanation: '`useradd` est la commande de bas niveau pour ajouter un utilisateur. `adduser` est un script plus convivial qui utilise `useradd` en arrière-plan.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'sudo useradd newuser'),
@@ -341,8 +295,6 @@ export const quizzes = {
     {
       type: 'terminal',
       question: 'Comment ajouter un utilisateur existant au groupe `sudo` ?',
-      options: ['usermod -g sudo user', 'usermod -aG sudo user', 'addgroup sudo user'],
-      answer: 'usermod -aG sudo user',
       explanation: '`usermod -aG` ajoute l\'utilisateur au groupe spécifié sans le retirer de ses autres groupes. `-a` pour append, `-G` pour group.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'sudo usermod -a -g sudo user', 'sudo usermod -ag sudo user', 'sudo usermod -g a sudo user'),
@@ -351,8 +303,6 @@ export const quizzes = {
     {
       type: 'terminal',
       question: 'Quelle commande affiche les groupes auxquels appartient l\'utilisateur `admin` ?',
-      options: ['id admin', 'groups admin', 'cat /etc/group | grep admin'],
-      answer: 'groups admin',
       explanation: 'La commande `groups` affiche les groupes d\'un utilisateur. `id` affiche également les informations de l\'utilisateur, y compris les groupes.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'groups admin'),
@@ -361,8 +311,6 @@ export const quizzes = {
     {
       type: 'terminal',
       question: 'Pour supprimer un utilisateur et son répertoire personnel, quelle commande utiliser ?',
-      options: ['userdel user', 'userdel -r user', 'rmuser user'],
-      answer: 'userdel -r user',
       explanation: '`userdel -r` supprime l\'utilisateur et son répertoire personnel. Sans `-r`, seul le compte utilisateur est supprimé, laissant les fichiers orphelins.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'sudo userdel -r user'),
@@ -370,11 +318,9 @@ export const quizzes = {
     },
   ],
   10: [
-    {
+    { // This was lesson 13, now it's lesson 10
       type: 'terminal',
       question: 'Quelle commande permet de créer une archive `archive.tar` à partir de `dossier/` ?',
-      options: ['tar -xf archive.tar dossier/', 'tar -cvf archive.tar dossier/', 'zip archive.tar dossier/'],
-      answer: 'tar -cvf archive.tar dossier/',
       explanation: '`tar -cvf` crée (`c`), affiche les fichiers traités (`v` pour verbose) et spécifie le nom du fichier d\'archive (`f`).',
       initialFiles: { 'dossier/file.txt': '' },
       validate: (typedCommand, output, fs) => {
@@ -466,149 +412,9 @@ export const quizzes = {
     },
   ],
   12: [
-    {
+    { // This was lesson 15, now it's lesson 12
       type: 'terminal',
       question: 'Quelle commande permet de vérifier le statut d\'un service systemd ?',
-      explanation: '`sudo apt update` télécharge les informations les plus récentes sur les paquets depuis les dépôts configurés.',
-      initialFiles: {},
-      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'sudo apt update'),
-      expectedCommand: 'sudo apt update',
-    },
-    {
-      type: 'terminal',
-      question: 'Simule le démarrage du service `nginx` (utilise `sudo systemctl start nginx`).', commands: ['sudo systemctl start nginx'], initialFiles: {},
-      expected: 'All packages are up to date.', // This is still used by the simulator's default success check
-      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'sudo apt update'),
-      expectedCommand: 'sudo apt update',
-      explanation: '`sudo apt update` est la première étape avant d\'installer ou de mettre à jour des logiciels.',
-    },
-    {
-      question: 'Comment installer le paquet `nginx` ?',
-      explanation: '`sudo apt install` est la commande correcte pour installer un paquet. `sudo` est nécessaire car l\'installation de logiciels affecte le système.', type: 'terminal',
-      question: 'Tape la commande pour installer le paquet `nginx`.',
-      initialFiles: {},
-      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'sudo apt install nginx'),
-      expectedCommand: 'sudo apt install nginx',
-    },
-    {
-      type: 'terminal',
-      question: 'Pour supprimer un paquet et ses fichiers de configuration, quelle commande utiliser ?',
-      explanation: '`apt purge` supprime le paquet et tous ses fichiers de configuration, tandis que `apt remove` ne supprime que le paquet.',
-      initialFiles: {},
-      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'sudo apt purge mypackage'),
-      expectedCommand: 'sudo apt purge [nom_paquet]',
-    },
-    {
-      type: 'terminal',
-      question: 'Quelle commande liste tous les paquets installés sur le système ?',
-      explanation: '`dpkg -l` liste tous les paquets gérés par dpkg, y compris leur statut (installé, supprimé, etc.). `apt list --installed` est une alternative plus moderne.',
-      initialFiles: {},
-      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'dpkg -l') || matchesCommand(typedCommand, 'apt list --installed'),
-      expectedCommand: 'dpkg -l',
-    },
-  ],
-  13: [
-    {
-      type: 'terminal',
-      question: 'Quelle commande affiche l\'espace disque utilisé et disponible de manière lisible ?',
-      explanation: '`crontab -e` ouvre l\'éditeur de texte par défaut pour modifier votre crontab personnelle.',
-      initialFiles: {},
-      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'crontab -e'),
-      expectedCommand: 'crontab -e',
-    },
-    {
-      type: 'terminal',
-      question: 'Affiche la taille du dossier courant de manière lisible (utilise `du -sh .`).', commands: ['du -sh .'], initialFiles: { 'file1.txt': 'content', 'subdir/file2.txt': 'more content' },
-      expected: 'no crontab for user',
-      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'crontab -l'),
-      expectedCommand: 'crontab -l',
-      explanation: '`crontab -l` liste les tâches cron planifiées pour l\'utilisateur courant.',
-    },
-    {
-      type: 'terminal',
-      question: 'Dans la syntaxe cron `* * * * * commande`, que représente le troisième astérisque ?',
-      options: ['Le jour de la semaine', 'Le jour du mois', 'L\'heure'],
-      answer: 'Le jour du mois',
-      explanation: 'La syntaxe est : minute (0-59), heure (0-23), jour du mois (1-31), mois (1-12), jour de la semaine (0-7, Dim=0 ou 7).',
-      initialFiles: {},
-    },
-    {
-      type: 'terminal',
-      question: 'Comment planifier la commande `echo "Hello"` pour qu\'elle s\'exécute dans 5 minutes ?',
-      options: ['cron -e "echo Hello" 5min', 'echo "echo Hello" | at now + 5 minutes', 'at 5min echo Hello'],
-      answer: 'echo "echo Hello" | at now + 5 minutes',
-      explanation: 'La commande `at` permet de planifier des tâches uniques. `now + 5 minutes` spécifie le délai.',
-      initialFiles: {},
-      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'echo "echo hello" | at now + 5 minutes'),
-      expectedCommand: 'echo "echo Hello" | at now + 5 minutes',
-    },
-    {
-      type: 'terminal',
-      question: 'Quelle commande permet de lister les tâches `at` en attente ?',
-      options: ['at -l', 'atq', 'at -r'],
-      answer: 'atq',
-      explanation: '`atq` (at queue) affiche la liste des tâches planifiées avec `at` qui n\'ont pas encore été exécutées.',
-      initialFiles: {},
-      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'atq'),
-      expectedCommand: 'atq',
-    },
-  ],
-  14: [
-    {
-      type: 'terminal',
-      question: 'Quelle commande permet de se connecter à un serveur distant via SSH ?',
-      options: ['connect user@host', 'ssh user@host', 'remote user@host'],
-      answer: 'ssh user@host',
-      explanation: '`ssh` est la commande standard pour établir une connexion sécurisée à un hôte distant.',
-      initialFiles: {},
-      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'ssh user@host'),
-      expectedCommand: 'ssh user@host',
-    },
-    {
-      type: 'terminal',
-      question: 'Simule la génération d\'une paire de clés SSH (utilise `ssh-keygen`).',
-      commands: ['ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa_test -N ""'],
-      initialFiles: {},
-      expected: 'Your public key has been saved in ~/.ssh/id_rsa_test.pub', // This is still used by the simulator's default success check
-      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa_test -n ""'),
-      expectedCommand: 'ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa_test -N ""',
-      explanation: '`ssh-keygen` génère une paire de clés (publique et privée). `-t rsa` spécifie le type, `-b 4096` la taille, `-f` le nom du fichier, et `-N ""` une passphrase vide pour le test.',
-    },
-    {
-      type: 'terminal',
-      question: 'Quel est le rôle de la clé publique dans l\'authentification SSH ?',
-      options: ['Chiffrer la connexion', 'Authentifier le client sur le serveur', 'Authentifier le serveur sur le client'],
-      answer: 'Authentifier le client sur le serveur',
-      explanation: 'La clé publique est placée sur le serveur distant et permet au serveur de vérifier l\'identité du client qui tente de se connecter avec sa clé privée correspondante.',
-      initialFiles: {},
-    },
-    {
-      type: 'terminal',
-      question: 'Comment copier le fichier `rapport.pdf` vers le dossier `/tmp` du serveur `user@192.168.1.100` ?',
-      options: ['ssh copy rapport.pdf user@192.168.1.100:/tmp/', 'scp rapport.pdf user@192.168.1.100:/tmp/', 'cp rapport.pdf user@192.168.1.100:/tmp/'],
-      answer: 'scp rapport.pdf user@192.168.1.100:/tmp/',
-      explanation: '`scp` (secure copy) est utilisé pour copier des fichiers de manière sécurisée entre hôtes via SSH.',
-      initialFiles: { 'rapport.pdf': 'content' },
-      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'scp rapport.pdf user@192.168.1.100:/tmp/'),
-      expectedCommand: 'scp rapport.pdf user@192.168.1.100:/tmp/',
-    },
-    {
-      type: 'terminal',
-      question: 'Pour copier un fichier depuis un serveur distant vers votre machine locale, quelle commande utiliser ?',
-      options: ['scp user@host:/path/file .', 'ssh get user@host:/path/file', 'pull user@host:/path/file'],
-      answer: 'scp user@host:/path/file .',
-      explanation: 'Avec `scp`, la source est le fichier distant et la destination est le répertoire local (`.`).',
-      initialFiles: {},
-      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'scp user@host:/path/file .'),
-      expectedCommand: 'scp user@host:/path/file .',
-    },
-  ],
-  15: [
-    {
-      type: 'terminal',
-      question: 'Quelle commande permet de vérifier le statut d\'un service systemd ?',
-      options: ['service nom_service status', 'systemctl status nom_service', 'info nom_service'],
-      answer: 'systemctl status nom_service',
       explanation: '`systemctl status` affiche l\'état actuel d\'un service, s\'il est actif, inactif, en échec, etc.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'systemctl status nginx'),
@@ -627,8 +433,6 @@ export const quizzes = {
     {
       type: 'terminal',
       question: 'Comment faire en sorte qu\'un service `apache2` démarre automatiquement au boot ?',
-      options: ['systemctl autostart apache2', 'sudo systemctl enable apache2', 'systemctl start --on-boot apache2'],
-      answer: 'sudo systemctl enable apache2',
       explanation: '`systemctl enable` crée un lien symbolique qui assure que le service sera démarré au prochain boot.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'sudo systemctl enable apache2'),
@@ -637,8 +441,6 @@ export const quizzes = {
     {
       type: 'terminal',
       question: 'Pour afficher les logs d\'un service `sshd` en temps réel, quelle commande utiliser ?',
-      options: ['tail -f /var/log/sshd.log', 'journalctl -u sshd -f', 'cat /var/log/sshd.log | watch'],
-      answer: 'journalctl -u sshd -f',
       explanation: '`journalctl -u` affiche les logs d\'une unité systemd spécifique, et `-f` (follow) permet de voir les nouvelles entrées en temps réel.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'journalctl -u sshd -f'),
@@ -647,20 +449,16 @@ export const quizzes = {
     {
       type: 'terminal',
       question: 'Quelle commande permet d\'arrêter un service `mysql` ?',
-      options: ['sudo systemctl stop mysql', 'killall mysql', 'service mysql stop'],
-      answer: 'sudo systemctl stop mysql',
       explanation: '`sudo systemctl stop` arrête un service géré par systemd.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'sudo systemctl stop mysql'),
       expectedCommand: 'sudo systemctl stop mysql',
     },
   ],
-  16: [
-    {
+  13: [
+    { // This was lesson 16, now it's lesson 13
       type: 'terminal',
       question: 'Quelle commande permet de tester la connectivité réseau vers `google.com` ?',
-      options: ['check google.com', 'ping google.com', 'test-net google.com'],
-      answer: 'ping google.com',
       explanation: '`ping` envoie des paquets ICMP à une destination et mesure le temps de réponse, utile pour vérifier la connectivité.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'ping google.com'),
@@ -679,8 +477,6 @@ export const quizzes = {
     {
       type: 'terminal',
       question: 'Comment effectuer une requête HTTP GET vers `example.com` depuis le terminal ?',
-      options: ['wget example.com', 'curl example.com', 'get example.com'],
-      answer: 'curl example.com',
       explanation: '`curl` est un outil polyvalent pour transférer des données avec des URL, supportant de nombreux protocoles dont HTTP.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'curl example.com'),
@@ -689,8 +485,6 @@ export const quizzes = {
     {
       type: 'terminal',
       question: 'Quelle commande liste les connexions réseau actives (sockets) ?',
-      options: ['netstat -tuln', 'ss -tuln', 'connections -a'],
-      answer: 'ss -tuln',
       explanation: '`ss` (socket statistics) est une commande moderne pour inspecter les sockets. `-t` (TCP), `-u` (UDP), `-l` (listening), `-n` (numérique). `netstat` est une alternative plus ancienne.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'ss -t -u -l -n') || matchesCommand(typedCommand, 'netstat -t -u -l -n'),
@@ -699,20 +493,16 @@ export const quizzes = {
     {
       type: 'terminal',
       question: 'Pour voir le chemin que prennent les paquets pour atteindre `facebook.com`, quelle commande utiliser ?',
-      options: ['route facebook.com', 'tracepath facebook.com', 'traceroute facebook.com'],
-      answer: 'traceroute facebook.com',
       explanation: '`traceroute` affiche la liste des routeurs (hops) par lesquels passent les paquets pour atteindre une destination.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'traceroute facebook.com'),
       expectedCommand: 'traceroute facebook.com',
     },
   ],
-  17: [
-    {
+  14: [
+    { // This was lesson 17, now it's lesson 14
       type: 'terminal',
       question: 'Comment surveiller un fichier de log en temps réel ?',
-      options: ['cat -f log.txt', 'tail -f log.txt', 'watch log.txt'],
-      answer: 'tail -f log.txt',
       explanation: '`tail -f` (follow) affiche les dernières lignes d\'un fichier et continue d\'afficher les nouvelles lignes au fur et à mesure qu\'elles sont ajoutées.',
       initialFiles: { 'log.txt': 'line1\nline2' },
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'tail -f log.txt'),
@@ -731,8 +521,6 @@ export const quizzes = {
     {
       type: 'terminal',
       question: 'Pour naviguer efficacement dans un très grand fichier de log, quelle commande est la plus adaptée ?',
-      options: ['cat biglog.txt', 'more biglog.txt', 'less biglog.txt'],
-      answer: 'less biglog.txt',
       explanation: '`less` permet de visualiser un fichier page par page, de rechercher du texte et de naviguer sans charger tout le fichier en mémoire, contrairement à `cat`.',
       initialFiles: { 'biglog.txt': 'line1\n'.repeat(100) },
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'less biglog.txt'),
@@ -741,8 +529,6 @@ export const quizzes = {
     {
       type: 'terminal',
       question: 'Quelle commande affiche le contenu du fichier `/var/log/syslog` ?',
-      options: ['read /var/log/syslog', 'cat /var/log/syslog', 'open /var/log/syslog'],
-      answer: 'cat /var/log/syslog',
       explanation: '`cat` est la commande de base pour afficher le contenu d\'un fichier. Pour les fichiers longs, `less` est préférable.',
       initialFiles: { '/var/log/syslog': 'log content' },
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'cat /var/log/syslog') && output.includes('log content'),
@@ -751,20 +537,16 @@ export const quizzes = {
     {
       type: 'terminal',
       question: 'Pour filtrer les lignes contenant "failed" dans `/var/log/auth.log`, quelle commande utiliser ?',
-      options: ['grep "failed" /var/log/auth.log', 'find "failed" /var/log/auth.log', 'filter "failed" /var/log/auth.log'],
-      answer: 'grep "failed" /var/log/auth.log',
       explanation: '`grep` est l\'outil idéal pour rechercher des motifs de texte dans des fichiers.',
       initialFiles: { '/var/log/auth.log': 'login failed\nsuccess' },
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'grep failed /var/log/auth.log') && output.includes('login failed'),
       expectedCommand: 'grep "failed" /var/log/auth.log',
     },
   ],
-  18: [
-    {
+  15: [
+    { // This was lesson 18, now it's lesson 15
       type: 'terminal',
       question: 'Quelle commande affiche l\'espace disque utilisé et disponible de manière lisible ?',
-      options: ['df', 'df -h', 'du -h'],
-      answer: 'df -h',
       explanation: '`df -h` (disk free - human readable) affiche l\'utilisation de l\'espace disque pour les systèmes de fichiers montés, avec des tailles lisibles (Go, Mo).',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'df -h'),
@@ -783,16 +565,12 @@ export const quizzes = {
     {
       type: 'terminal',
       question: 'Quel est le rôle de la commande `mount` ?',
-      options: ['Formater un disque', 'Connecter un système de fichiers à l\'arborescence', 'Vérifier l\'intégrité d\'un disque'],
-      answer: 'Connecter un système de fichiers à l\'arborescence',
       explanation: '`mount` attache un système de fichiers (d\'un disque, d\'une partition, d\'un partage réseau) à un point de montage dans l\'arborescence du système.',
       initialFiles: {},
     },
     {
       type: 'terminal',
       question: 'Quelle commande liste les périphériques de bloc (disques, partitions) ?',
-      options: ['fdisk -l', 'lsblk', 'parted -l'],
-      answer: 'lsblk',
       explanation: '`lsblk` (list block devices) affiche les informations sur les périphériques de stockage de manière arborescente.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'lsblk'),
@@ -801,20 +579,16 @@ export const quizzes = {
     {
       type: 'terminal',
       question: 'Pour afficher le type de système de fichiers (ext4, xfs, etc.) des partitions, quelle option de `df` utiliser ?',
-      options: ['df -t', 'df -T', 'df -f'],
-      answer: 'df -T',
       explanation: '`df -T` inclut la colonne "Type" qui indique le type de système de fichiers.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'df -t'),
       expectedCommand: 'df -T',
     },
   ],
-  19: [
-    {
+  16: [
+    { // This was lesson 19, now it's lesson 16
       type: 'terminal',
       question: 'Que signifie la permission numérique `755` pour un fichier ?',
-      options: ['rwx rwx rwx', 'rwx r-x r-x', 'rwx rw- r--'],
-      answer: 'rwx r-x r-x',
       explanation: '7 (rwx) pour le propriétaire, 5 (r-x) pour le groupe, 5 (r-x) pour les autres. `r=4, w=2, x=1`.',
       initialFiles: {},
     },
@@ -837,8 +611,6 @@ export const quizzes = {
     {
       type: 'terminal',
       question: 'Quelle commande permet d\'exécuter une commande avec les privilèges de l\'utilisateur root ?',
-      options: ['doas commande', 'sudo commande', 'runas commande'],
-      answer: 'sudo commande',
       explanation: '`sudo` (superuser do) permet à un utilisateur autorisé d\'exécuter des commandes en tant que superutilisateur ou un autre utilisateur.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'sudo apt update'),
@@ -847,8 +619,6 @@ export const quizzes = {
     {
       type: 'terminal',
       question: 'Le fichier `/etc/sudoers` est utilisé pour configurer `sudo`. Quelle commande est recommandée pour l\'éditer ?',
-      options: ['nano /etc/sudoers', 'vi /etc/sudoers', 'visudo'],
-      answer: 'visudo',
       explanation: '`visudo` est l\'outil sûr pour éditer `/etc/sudoers`. Il vérifie la syntaxe avant d\'enregistrer, évitant de bloquer l\'accès `sudo`.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'sudo visudo'),
@@ -857,20 +627,16 @@ export const quizzes = {
     {
       type: 'terminal',
       question: 'Quelle commande affiche ou définit le masque de création de fichiers par défaut ?',
-      options: ['mask', 'umask', 'fmask'],
-      answer: 'umask',
       explanation: '`umask` détermine les permissions par défaut des nouveaux fichiers et répertoires créés.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'umask'),
       expectedCommand: 'umask',
     },
   ],
-  20: [
-    {
+  17: [
+    { // This was lesson 20, now it's lesson 17
       type: 'terminal',
       question: 'Quelle commande permet de récupérer des informations publiques sur un nom de domaine ?',
-      options: ['dnslookup', 'whois', 'domaininfo'],
-      answer: 'whois',
       explanation: '`whois` interroge les bases de données publiques pour obtenir des informations sur l\'enregistrement d\'un domaine (propriétaire, dates, serveurs DNS).',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'whois example.com'),
@@ -889,26 +655,148 @@ export const quizzes = {
     {
       type: 'terminal',
       question: 'Quel est le principal risque d\'utiliser `nmap` sur un réseau sans autorisation ?',
-      options: ['Ralentir le réseau', 'Être détecté et considéré comme une activité malveillante', 'Endommager les machines cibles'],
-      answer: 'Être détecté et considéré comme une activité malveillante',
       explanation: 'Scanner un réseau sans autorisation est souvent considéré comme une tentative d\'intrusion et peut entraîner des conséquences légales ou la suspension de votre accès.',
       initialFiles: {},
     },
     {
       type: 'terminal',
       question: 'Dans le contexte de la cybersécurité, pourquoi est-il important de comprendre les outils comme `nmap` ?',
-      options: ['Pour attaquer des systèmes', 'Pour mieux défendre ses propres systèmes en comprenant les menaces', 'Pour impressionner ses amis'],
-      answer: 'Pour mieux défendre ses propres systèmes en comprenant les menaces',
       explanation: 'Connaître les outils des attaquants permet de mieux anticiper et de renforcer la sécurité de ses propres infrastructures.',
       initialFiles: {},
     },
     {
       type: 'terminal',
       question: 'Quel est le principe éthique fondamental lors de l\'utilisation d\'outils de reconnaissance réseau ?',
-      options: ['Ne jamais se faire prendre', 'Toujours demander l\'autorisation avant de scanner', 'Scanner uniquement les systèmes vulnérables'],
-      answer: 'Toujours demander l\'autorisation avant de scanner',
       explanation: 'Le respect de la vie privée et de la propriété d\'autrui est primordial. Toujours obtenir un consentement explicite avant toute activité de scan.',
       initialFiles: {},
+    },
+  ],
+  18: [
+    { // New quiz for lesson 18 (Archivage avancé et synchronisation)
+      type: 'terminal',
+      question: 'Quelle commande permet de synchroniser des fichiers de manière efficace ?',
+      explanation: '`rsync` est un outil puissant pour la synchronisation incrémentielle de fichiers, localement ou à distance.',
+      initialFiles: {},
+      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'rsync -avz source/ destination/'),
+      expectedCommand: 'rsync -avz [source] [destination]',
+    },
+    {
+      type: 'terminal',
+      question: 'Crée une archive `backup.tar` du dossier `data/` et ajoute-y un nouveau fichier `new_file.txt` (simulé).',
+      commands: ['tar -cvf backup.tar data/', 'touch data/new_file.txt', 'tar -rvf backup.tar data/new_file.txt'],
+      initialFiles: { 'data/old_file.txt': '' },
+      expected: 'backup.tar',
+      explanation: '`tar -r` permet d\'ajouter des fichiers à une archive existante.',
+      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'tar -rvf backup.tar data/new_file.txt') && fsEntryExists(fs, '/backup.tar', 'file'),
+      expectedCommand: 'tar -rvf backup.tar data/new_file.txt',
+    },
+    {
+      type: 'terminal',
+      question: 'Quelle option de `tar` permet de conserver les permissions et les dates lors de l\'extraction ?',
+      explanation: 'L\'option `-p` (preserve-permissions) de `tar` permet de conserver les permissions originales des fichiers lors de l\'extraction.',
+      initialFiles: {},
+      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'tar -xpf archive.tar'),
+      expectedCommand: 'tar -xpf [archive.tar]',
+    },
+    {
+      type: 'terminal',
+      question: 'Pour copier un disque entier bloc par bloc, quelle commande utiliser (avec prudence) ?',
+      explanation: '`dd` est une commande de bas niveau pour copier des données brutes. Elle est très puissante mais dangereuse si mal utilisée.',
+      initialFiles: {},
+      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'dd if=/dev/sda of=/dev/sdb'),
+      expectedCommand: 'dd if=[source] of=[destination]',
+    },
+    {
+      type: 'terminal',
+      question: 'Comment vérifier l\'intégrité d\'une archive `archive.tar.gz` sans l\'extraire ?',
+      explanation: '`tar -tzf` permet de lister le contenu d\'une archive compressée sans l\'extraire, ce qui peut servir de vérification basique.',
+      initialFiles: { 'archive.tar.gz': 'compressed content' },
+      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'tar -tzf archive.tar.gz'),
+      expectedCommand: 'tar -tzf archive.tar.gz',
+    },
+  ],
+  19: [
+    { // New quiz for lesson 19 (Scripting Bash avancé)
+      type: 'terminal',
+      question: 'Déclare une variable `NOM` avec la valeur "Linux" en Bash.',
+      explanation: 'En Bash, les variables sont déclarées sans `$` et assignées avec `=`.',
+      initialFiles: {},
+      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'NOM="Linux"'),
+      expectedCommand: 'NOM="Linux"',
+    },
+    {
+      type: 'terminal',
+      question: 'Affiche la valeur de la variable `NOM` que tu viens de créer.',
+      explanation: 'Pour accéder à la valeur d\'une variable, on utilise le `$` devant son nom.',
+      initialFiles: {},
+      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'echo $NOM') && output.includes('Linux'),
+      expectedCommand: 'echo $NOM',
+    },
+    {
+      type: 'terminal',
+      question: 'Écris une condition `if` qui vérifie si le dossier `/tmp` existe.',
+      explanation: 'La commande `test -d /tmp` ou `[ -d /tmp ]` vérifie si `/tmp` est un dossier.',
+      initialFiles: {},
+      validate: (typedCommand, output, fs) => typedCommand.includes('if [ -d /tmp ]') || typedCommand.includes('if test -d /tmp'),
+      expectedCommand: 'if [ -d /tmp ]',
+    },
+    {
+      type: 'terminal',
+      question: 'Crée une boucle `for` qui affiche les nombres de 1 à 3.',
+      explanation: 'Une boucle `for` peut itérer sur une séquence de nombres ou d\'éléments.',
+      initialFiles: {},
+      validate: (typedCommand, output, fs) => typedCommand.includes('for i in 1 2 3') || typedCommand.includes('for i in {1..3}'),
+      expectedCommand: 'for i in 1 2 3',
+    },
+    {
+      type: 'terminal',
+      question: 'Déclare une fonction Bash nommée `bonjour` qui affiche "Bonjour le monde !".',
+      explanation: 'Les fonctions Bash sont déclarées avec `function nom { ... }` ou `nom() { ... }`.',
+      initialFiles: {},
+      validate: (typedCommand, output, fs) => typedCommand.includes('function bonjour') || typedCommand.includes('bonjour()'),
+      expectedCommand: 'function bonjour { echo "Bonjour le monde !" }',
+    },
+  ],
+  20: [
+    { // New quiz for lesson 20 (Scripting Bash avancé - suite)
+      type: 'terminal',
+      question: 'Écris un script simple qui prend un nom en argument et affiche "Bonjour, [Nom] !".',
+      explanation: 'Les arguments d\'un script sont accessibles via `$1`, `$2`, etc.',
+      initialFiles: {},
+      validate: (typedCommand, output, fs) => typedCommand.includes('echo "Bonjour, $1 !"'),
+      expectedCommand: 'echo "Bonjour, $1 !"',
+    },
+    {
+      type: 'terminal',
+      question: 'Comment vérifier le code de retour de la dernière commande exécutée ?',
+      explanation: 'La variable spéciale `$?` contient le code de retour de la dernière commande.',
+      initialFiles: {},
+      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'echo $?'),
+      expectedCommand: 'echo $?',
+    },
+    {
+      type: 'terminal',
+      question: 'Crée un fichier `log.txt` et redirige la sortie de `ls -l` vers ce fichier.',
+      explanation: 'L\'opérateur `>` redirige la sortie standard vers un fichier, écrasant son contenu.',
+      initialFiles: {},
+      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'ls -l > log.txt') && fsFileContentIncludes(fs, '/log.txt', 'total'),
+      expectedCommand: 'ls -l > log.txt',
+    },
+    {
+      type: 'terminal',
+      question: 'Ajoute la sortie de `pwd` à la fin du fichier `log.txt` sans écraser son contenu.',
+      explanation: 'L\'opérateur `>>` redirige la sortie standard et l\'ajoute à la fin du fichier.',
+      initialFiles: { 'log.txt': 'initial content\n' },
+      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'pwd >> log.txt') && fsFileContentIncludes(fs, '/log.txt', 'initial content\n/'),
+      expectedCommand: 'pwd >> log.txt',
+    },
+    {
+      type: 'terminal',
+      question: 'Exécute un script nommé `my_script.sh` qui se trouve dans le dossier courant.',
+      explanation: 'Pour exécuter un script dans le dossier courant, il faut spécifier son chemin relatif `./`.',
+      initialFiles: { 'my_script.sh': '#!/bin/bash\necho "Script exécuté"' },
+      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, './my_script.sh') && output.includes('Script exécuté'),
+      expectedCommand: './my_script.sh',
     },
   ],
 }
