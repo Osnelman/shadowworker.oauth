@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Lottie from 'lottie-react'
 import { useAuth } from '../context/AuthContext'
 import learningAnimation from '../Learning.json'
+import { useLocation } from 'react-router-dom'
 import BackButton from '../components/BackButton'
 
 export default function Login() {
@@ -10,10 +11,14 @@ export default function Login() {
   const [email, setEmail] = useState('')
   const [googleRenderFailed, setGoogleRenderFailed] = useState(false)
   const { ready, googleAvailable, authError, signInWithEmail, signInGuest, renderGoogleButton, signIn, user } = useAuth()
+  const location = useLocation();
+  const fromPremium = location.state?.fromPremium;
 
   useEffect(() => {
-    if (ready && user && !user.isGuest) navigate('/home', { replace: true })
-  }, [navigate, ready, user])
+    if (ready && user && !user.isGuest) {
+      navigate('/home', { replace: true });
+    }
+  }, [navigate, ready, user]);
 
   useEffect(() => {
     if (ready && googleAvailable) {
@@ -98,7 +103,7 @@ export default function Login() {
           <p className="muted" style={{ fontSize: '0.85rem', marginBottom: 12 }}>
             Tu peux aussi continuer en mode invité (ta progression sera locale).
           </p>
-          <button className="btn btn-secondary" onClick={() => { signInGuest(); navigate('/home') }} style={{ width: '100%', padding: '12px' }}>
+          <button className="btn btn-secondary" onClick={() => { signInGuest(); navigate('/home', { replace: true }) }} style={{ width: '100%', padding: '12px' }}>
             👤 Continuer en mode invité
           </button>
         </div>

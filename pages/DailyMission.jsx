@@ -36,7 +36,7 @@ export default function DailyMission() {
             Réclamer mes 75 XP
           </button>
         )} {/* Replaced the custom button with BackButton */}
-        <BackButton to="/home">Retour à la carte</BackButton>
+        <BackButton to="/home" className="btn btn-secondary">Retour à la carte</BackButton>
       </section>
     </main>
   )

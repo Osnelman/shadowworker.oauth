@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { GOOGLE_CLIENT_ID } from '../data/authConfig'
 
+const GAME_PROGRESS_PREFIX = 'linux-quest:'
 const AuthContext = createContext()
 const STORAGE_KEY = 'linux-quest-auth'
 const GUEST_ID_KEY = 'linux-quest-guest-id'
@@ -141,6 +142,7 @@ export function AuthProvider({ children }) {
         callback: (resp) => {
           const profile = parseJwt(resp.credential)
           if (profile) {
+            const previousUser = user; // Capture current user (might be guest)
             const userData = {
               id: profile.sub,
               name: profile.name,
@@ -148,6 +150,7 @@ export function AuthProvider({ children }) {
               picture: profile.picture,
               isGoogle: true,
             }
+            handleUserLogin(previousUser, userData); // Handle progression merge
             setUser(userData)
             saveUser(userData)
             setAuthError(null)
@@ -210,7 +213,9 @@ export function AuthProvider({ children }) {
       setAuthError('Entrez une adresse e-mail valide pour vous connecter.')
       return
     }
+    const previousUser = user; // Capture current user (might be guest)
     const profile = createEmailUser(value)
+    handleUserLogin(previousUser, profile); // Handle progression merge
     setUser(profile)
     saveUser(profile)
     setAuthError(null)
@@ -222,6 +227,27 @@ export function AuthProvider({ children }) {
     saveUser(guestUser)
     setAuthError(null)
   }
+
+  // Logic to handle user login and merge guest progress
+  const handleUserLogin = (previousUser, newUser) => {
+    if (previousUser?.isGuest && newUser?.id) {
+      const guestProgressKey = `${GAME_PROGRESS_PREFIX}${previousUser.id}`;
+      const newAuthProgressKey = `${GAME_PROGRESS_PREFIX}${newUser.id}`;
+
+      const guestProgress = localStorage.getItem(guestProgressKey);
+      const newAuthProgress = localStorage.getItem(newAuthProgressKey);
+
+      // If the new authenticated user has no saved progress, transfer guest progress
+      if (guestProgress && !newAuthProgress) {
+        localStorage.setItem(newAuthProgressKey, guestProgress);
+        console.log(`Progression de l'invité ${previousUser.id} transférée à l'utilisateur ${newUser.id}.`);
+      } else if (guestProgress && newAuthProgress) {
+        console.log(`Progression de l'invité ${previousUser.id} non transférée car l'utilisateur ${newUser.id} a déjà une progression.`);
+      }
+      // Clean up guest progress
+      localStorage.removeItem(guestProgressKey);
+    }
+  };
 
   const signOut = () => {
     if (user?.isGoogle && window.google && window.google.accounts && window.google.accounts.id) {

@@ -17,14 +17,10 @@ export default function Quiz() {
     addXp,
     resetLives,
     advanceLesson,
-    completeLesson,
     nextLifeAt,
     MAX_LIVES,
-    xp, // Pour détecter le gain d'XP et jouer le son
   } = useGame()
   const { addNotification } = useNotification()
-
-  const questions = quizzes[lessonId] || []
   const [index, setIndex] = useState(0)
   const [showExplanation, setShowExplanation] = useState(false)
   const [lastCorrect, setLastCorrect] = useState(null)
@@ -32,7 +28,10 @@ export default function Quiz() {
   const [showXpPop, setShowXpPop] = useState(false) // New state for XP pop animation
   const { playSound } = useSound()
   const [attemptCount, setAttemptCount] = useState(0) // New: tracks attempts for current question
-  const [incorrectOptions, setIncorrectOptions] = useState([]) // New: stores options chosen incorrectly
+
+  // Questions for the current lesson
+  const questions = quizzes[lessonId] || []
+
   const [timeLeft, setTimeLeft] = useState(null)
 
   useEffect(() => {
@@ -66,10 +65,14 @@ export default function Quiz() {
     setIndex(0);
     setAttemptCount(0);
     setIncorrectOptions([]);
+    // Removed incorrectOptions state as it's QCM specific
     setShowExplanation(false);
     setLastCorrect(null);
     setWillNavigateToCourse(false);
   }, [lessonId]);
+
+  // Remove showXpPop and related logic as XP gain is handled by TerminalSimulator's onSuccess
+  // and QCM is being removed.
 
   if (!questions.length) {
     return <div className="page card p-6 text-white">Aucun quiz disponible pour cette leçon.</div>
@@ -77,34 +80,16 @@ export default function Quiz() {
 
   const current = questions[index]
   const isLastQuestion = index === questions.length - 1
+  
+  const handleTerminalSuccess = () => {
+    addXp()
+    playSound('correct')
+    addNotification('⚡ Terminal : défi réussi +50 XP', 'success', 2500)
+    setLastCorrect(true)
+    setShowExplanation(true)
+  }
 
-  const handleAnswer = (option) => {
-    // Prevent answering if explanation is shown or option already chosen incorrectly
-    if (showExplanation || incorrectOptions.includes(option)) {
-      return;
-    }
-
-    const correct = option === current.answer;
-
-    if (correct) { // Correct answer on first or second try
-      setShowXpPop(true) // Trigger XP pop animation
-      addXp()
-      addNotification('⚡ +50 XP !', 'success', 2000)
-      playSound('correct')
-      setLastCorrect(true)
-      setShowExplanation(true) // Show explanation immediately on correct answer
-      setAttemptCount(0) // Reset attempts
-      setIncorrectOptions([]) // Reset incorrect options
-    } else { // Incorrect answer
-      setAttemptCount(prev => prev + 1)
-      setIncorrectOptions(prev => [...prev, option])
-
-      if (attemptCount === 0) { // First incorrect attempt (attemptCount was 0 before increment)
-        addNotification('❌ Ce n\'est pas ça, réessaie !', 'error', 2000)
-        playSound('incorrect') // Play sound on first incorrect attempt
-        setLastCorrect(false) // Mark as incorrect for now
-        // Do not show explanation, do not lose life yet
-      } else { // Second incorrect attempt (attemptCount is now 2)
+  const handleTerminalFailure = () => {
         const nextLives = Math.max(lives - 1, 0)
         loseLife()
         addNotification(`❤️ -1 Vie (${nextLives} restantes)`, 'error', 2000)
@@ -114,19 +99,15 @@ export default function Quiz() {
         if (nextLives === 0) {
           setWillNavigateToCourse(true)
         }
-      }
-    }
   }
 
   const handleNext = () => {
     setShowExplanation(false)
-    setAttemptCount(0) // Reset for new question
-    setIncorrectOptions([]) // Reset for new question
 
     if (lastCorrect) {
       if (isLastQuestion) {
         completeLesson(Number(lessonId))
-        resetLives()
+        // resetLives() // Lives are reset when navigating to result or course
         advanceLesson()
         navigate('/result')
         return
@@ -162,13 +143,6 @@ export default function Quiz() {
           <div>
             <p className="muted">Leçon {lessonId} · Question {index + 1}/{questions.length}</p>
             <h1>{current.question}</h1>
-          </div>
-          {showXpPop && (
-            <animated.span
-              className="xp-pop-animation"
-            >
-              +50 XP!
-            </animated.span>
           )}
           <div className="badge">
             ❤️ Vies : {lives} {timeLeft && <span className="muted" style={{ fontSize: '0.8em', marginLeft: '4px' }}>(+1 dans {timeLeft})</span>}
@@ -190,35 +164,13 @@ export default function Quiz() {
             <div className="quiz-options">
               <TerminalSimulator
                 initialFiles={current.initialFiles}
-                expected={current.expected}
-                onSuccess={() => {
-                  addXp()
-                playSound('correct')
-                  addNotification('⚡ Terminal : défi réussi +50 XP', 'success', 2500)
-                  setShowExplanation(true)
-                  setLastCorrect(true)
-                }}
+                expected={current.expected} // This is for the simulator to know what to expect
+                onSuccess={handleTerminalSuccess}
+                onFailure={handleTerminalFailure} // Added onFailure prop
               />
             </div>
           </>
         )}
-
-        {!showExplanation && current.type !== 'terminal' && (
-          <div className="quiz-options">
-            {current.options.map((option) => (
-              <button
-                key={option}
-                type="button"
-                className={`btn btn-secondary quiz-option ${incorrectOptions.includes(option) ? 'disabled-option' : ''}`}
-                onClick={() => handleAnswer(option)}
-                disabled={incorrectOptions.includes(option)} // Disable already chosen incorrect options
-              >
-                {option}
-              </button>
-            ))}
-          </div>
-        )}
-
         {showExplanation && (
           <div className="explanation card" style={{ marginTop: 18 }}>
             <h3 style={{ marginBottom: 8 }}>{lastCorrect ? 'Correct !' : 'Pas tout à fait'}</h3>

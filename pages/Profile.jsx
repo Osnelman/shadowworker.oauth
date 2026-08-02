@@ -32,7 +32,7 @@ export default function Profile() {
 
   return (
     <div className="page">
-      <header className="page-header" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <header className="page-header">
         <BackButton to="/home" />
         <h1>Mon Profil</h1>
       </header>

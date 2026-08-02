@@ -10,7 +10,7 @@ export default function NotFound() {
       <section className="card center-card">
         <h1>404</h1>
         <p className="muted">La page que tu cherches n’existe pas encore.</p>
-        <BackButton to="/home" className="btn btn-primary">Retour à l’accueil</BackButton>
+        <BackButton to="/home" className="btn btn-primary">Retour à l'accueil</BackButton>
       </section>
     </main>
   )

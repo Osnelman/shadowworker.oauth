@@ -21,7 +21,7 @@ export default function Progress() {
 
   return (
     <div className="page">
-      <header className="page-header" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <header className="page-header">
         <BackButton to="/home" />
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <h1>📊 Ma progression</h1>

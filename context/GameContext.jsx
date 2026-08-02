@@ -7,9 +7,10 @@ import { useSound } from './SoundContext'
 import trophyBadge from '../icons8-trophy-48.png'
 import missionBadge from '../icons8-mission-94.png'
 import targetBadge from '../icons8-bullseye-48.png'
+import { lessons } from '../data/lessons'
 
 const GameContext = createContext()
-const TOTAL_LESSONS = lessonIds.length
+const TOTAL_LESSONS = lessonIds.length // Dynamically get total lessons from data
 const MAX_LIVES = 3
 const LIFE_REGEN_MINUTES = 10
 
@@ -33,7 +34,7 @@ const DEFAULT_LOOT_STATE = {
 
 const XP_PER_COMMAND = 10
 const XP_PER_MISSION = 40
-const XP_PER_DAILY_MISSION = 25
+const XP_PER_DAILY_MISSION = 75 // Updated to match Home.jsx description
 const XP_LEVEL_BASE = 100
 const XP_LEVEL_EXPONENT = 1.5
 
@@ -104,6 +105,7 @@ const BADGES = [
   { id: 'all-lessons', name: 'Complétiste', emoji: '✅', icon: 'shield', img: missionBadge, color: '#2dd4bf', description: 'Complète les 5 leçons' },
   { id: 'mission-master', name: 'Maître des missions', emoji: '⭐', icon: 'target', img: targetBadge, color: '#ec4899', description: 'Complète 3 missions' },
   { id: 'streak-7', name: 'Semaine de feu', emoji: '🔥', icon: 'flame', color: '#f97316', description: 'Reviens 7 jours d’affilée' },
+  { id: 'treasure-chest', name: 'Chasseur de trésors', emoji: '💰', icon: 'treasure', img: trophyBadge, color: '#ffbf00', description: 'Ouvre un coffre au trésor' },
 ]
 
 function checkBadges(state) {
@@ -122,8 +124,9 @@ function checkBadges(state) {
   if (level >= 5 && !unlockedBadges.includes('level-5')) newBadges.push('level-5')
 
   // Badges Leçons
-  if (completedLessons.length > 0 && !unlockedBadges.includes('first-quiz')) newBadges.push('first-quiz')
-  if (completedLessons.length === lessonIds.length && !unlockedBadges.includes('all-lessons')) newBadges.push('all-lessons')
+  if (completedLessons.length > 0 && !unlockedBadges.includes('first-quiz') && lessons[completedLessons[0]]?.id === 1) newBadges.push('first-quiz') // Only for first lesson
+  // if (completedLessons.length === lessonIds.length && !unlockedBadges.includes('all-lessons')) newBadges.push('all-lessons') // Redundant
+  if (completedLessons.length === TOTAL_LESSONS && !unlockedBadges.includes('all-lessons')) newBadges.push('all-lessons')
 
   // Badges Missions
   if (completedMissions.length >= 3 && !unlockedBadges.includes('mission-master')) newBadges.push('mission-master')

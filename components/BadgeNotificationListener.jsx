@@ -49,3 +49,17 @@ export default function GameNotificationListener() {
 
   return null
 }
+
+// Add styles for premium lock icon
+/*
+.premium-lock-icon {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  font-size: 0.8em;
+  background: #fbbf24;
+  border-radius: 50%;
+  padding: 2px;
+  line-height: 1;
+}
+*/

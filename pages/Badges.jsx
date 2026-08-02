@@ -13,7 +13,7 @@ export default function Badges() {
 
   return (
     <div className="page">
-      <header className="page-header" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <header className="page-header">
         <BackButton to="/home" />
         <h1>🏆 Mes Badges</h1>
       </header>

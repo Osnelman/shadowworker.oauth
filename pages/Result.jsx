@@ -47,7 +47,7 @@ export default function Result() {
           >
             Revenir à l’accueil
           </button>
-          <BackButton to="/home">Voir mon tableau de bord</BackButton>
+          <BackButton to="/home" className="btn btn-secondary">Voir mon tableau de bord</BackButton>
         </div>
       </section>
     </main>

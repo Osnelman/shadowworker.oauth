@@ -129,7 +129,7 @@ export default function Mission() {
           >
             {missionCompleted ? 'Voir le résumé' : 'Marquer la mission comme terminée'}
           </button>
-          <BackButton />
+          <BackButton to="/home" />
         </div>
       </section>
     </main>

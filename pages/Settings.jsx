@@ -13,7 +13,7 @@ export default function Settings() {
   return (
     <main className="page">
       <section className="card" style={{ maxWidth: 720, margin: '0 auto', padding: 24 }}>
-        <div style={{ marginBottom: 18, display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div className="page-header">
           <BackButton />
           <h1 style={{ margin: 0 }}>Paramètres</h1>
         </div>

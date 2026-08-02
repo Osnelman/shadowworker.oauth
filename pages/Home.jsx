@@ -4,7 +4,9 @@ import { useGame } from '../context/GameContext'
 import { useSpring, animated } from '@react-spring/web'
 import { useAuth } from '../context/AuthContext'
 import ProfileCorner from '../components/ProfileCorner'
-import { lessons, lessonIds } from '../data/lessons.jsx'
+import { lessons, lessonIds } from '../data/lessons'
+import { usePremium } from '../context/PremiumContext'
+import PremiumModal from '../components/PremiumModal'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -12,6 +14,8 @@ export default function Home() {
   const { user } = useAuth()
   const nextLesson = lessonIds.find((id) => !completedLessons.includes(id)) || lessonIds[lessonIds.length - 1]
   const [timeLeft, setTimeLeft] = useState(null)
+  const { isPremium, premiumLoading } = usePremium()
+  const [showPremiumModal, setShowPremiumModal] = useState(false)
   const [previousStreak, setPreviousStreak] = useState(loginStreak)
 
   const streakSpring = useSpring({

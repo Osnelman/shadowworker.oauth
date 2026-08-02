@@ -38,6 +38,17 @@ export default function BadgeIcon({ type }) {
     case 'penguin':
       icon = <span role="img" aria-label="penguin">🐧</span>
       break
+    case 'users': icon = <><path d="M16 28c0-6 5-11 11-11h10c6 0 11 5 11 11M32 38v10M22 48h20" {...common} /><circle cx="32" cy="22" r="6" {...common} /></>; break;
+    case 'package': icon = <><path d="M10 16v32l22 10 22-10V16L32 6Z" {...common} /><path d="m10 16 22 10 22-10M32 26v22" {...common} /></>; break;
+    case 'text-editor': icon = <><rect x="10" y="10" width="44" height="44" rx="4" {...common} /><path d="M18 18h28M18 26h28M18 34h14M18 42h14" {...common} /></>; break;
+    case 'disk': icon = <><circle cx="32" cy="32" r="22" {...common} /><circle cx="32" cy="32" r="10" {...common} /><path d="M32 10v44" {...common} /></>; break;
+    case 'clock': icon = <><circle cx="32" cy="32" r="22" {...common} /><path d="M32 10v22h10" {...common} /></>; break;
+    case 'globe': icon = <><circle cx="32" cy="32" r="22" {...common} /><path d="M10 32h44M32 10v44" {...common} /></>; break;
+    case 'satellite': icon = <><path d="M10 32a22 22 0 0 1 44 0M32 10v44M10 32c0 12 10 22 22 22s22-10 22-22M32 10c-12 0-22 10-22 22s10 22 22 22" {...common} /><path d="M44 20 54 10M20 44 10 54" {...common} /></>; break;
+    case 'scroll': icon = <><path d="M16 8v48l16-8 16 8V8L32 16Z" {...common} /><path d="M16 8c0 8 16 8 16 0M48 8c0 8-16 8-16 0" {...common} /></>; break;
+    case 'hard-drive': icon = <><rect x="10" y="10" width="44" height="20" rx="4" {...common} /><rect x="10" y="34" width="44" height="20" rx="4" {...common} /><path d="M18 17h2M18 41h2" {...common} /></>; break;
+    case 'key': icon = <><circle cx="20" cy="44" r="8" {...common} /><path d="m26 38 10-10M36 28l10-10M46 18l-6-6" {...common} /></>; break;
+    case 'detective': icon = <><path d="M16 20c0-6 5-11 11-11h10c6 0 11 5 11 11M32 38v10M22 48h20" {...common} /><circle cx="32" cy="22" r="6" {...common} /><path d="M22 32h20" {...common} /></>; break;
     default:
       icon = <circle cx="32" cy="32" r="18" {...common} />
   }

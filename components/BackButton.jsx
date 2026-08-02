@@ -12,8 +12,12 @@ export default function BackButton({ to, children = '← Retour', className = 'b
     }
   };
 
+  // Add default styling for page-header if not already present
+  // This ensures consistency with other page headers
+  const finalClassName = className.includes('page-header-back-button') ? className : `${className} page-header-back-button`;
+
   return (
-    <button className={className} onClick={handleClick}>
+    <button className={finalClassName} onClick={handleClick}>
       {children}
     </button>
   );
