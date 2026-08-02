@@ -334,6 +334,18 @@ p {
   transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease;
 }
 
+.btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 6px; /* Initial "3D" depth */
+  border-radius: 0 0 18px 18px;
+  transition: height 0.1s ease, transform 0.1s ease;
+}
+
+/* Base button hover effect */
 .btn:hover {
   transform: translateY(-1px);
 }
@@ -342,12 +354,37 @@ p {
   background: linear-gradient(135deg, rgba(255, 179, 71, 0.95), rgba(255, 147, 30, 0.95));
   color: #0f0b03;
   font-weight: 700;
+  position: relative; /* Needed for ::after pseudo-element */
+  border: none; /* Remove default border */
 }
+
+.btn-primary::after {
+  background: rgba(209, 138, 0, 0.8); /* Darker amber for depth */
+}
+
+.btn-primary:active {
+  transform: translateY(2px); /* Simulate press */
+}
+
+.btn-primary:active::after {
+  height: 2px; /* Reduce depth on press */
+  transform: translateY(2px);
+}
+
 
 .btn-secondary {
   background: rgba(255, 179, 71, 0.08);
   color: #f8f8f2;
   border: 1px solid rgba(255, 179, 71, 0.2);
+  position: relative; /* Needed for ::after pseudo-element */
+}
+
+.btn-secondary::after {
+  background: rgba(255, 179, 71, 0.05); /* Slightly darker for depth */
+}
+
+.btn-secondary:active {
+  transform: translateY(2px);
 }
 
 .course-overview ul {
@@ -393,6 +430,18 @@ button:focus,
   outline: 3px solid rgba(34,197,94,0.14);
   outline-offset: 3px;
 }
+
+.quiz-option.incorrect-option {
+  background-color: #fee2e2; /* rouge clair */
+  color: #991b1b; /* rouge foncé */
+  border-color: #ef4444; /* rouge moyen */
+}
+
+.quiz-option.disabled-option {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 
 .lesson-steps {
   display: grid;
@@ -518,6 +567,12 @@ button:focus,
 .explanation h3 {
   color: #a7f3d0;
   margin: 0 0 6px 0;
+}
+
+/* XP pop animation */
+@keyframes xp-pop {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-20px) scale(1.2); opacity: 0; }
 }
 
 .explanation p {
@@ -875,6 +930,10 @@ button:focus,
   height: 100%;
   background: linear-gradient(90deg, #22c55e, #84cc16);
   transition: width 0.6s ease;
+}
+
+.progress-bar-full .progress-fill {
+  transition: width 0.6s ease-in-out; /* Smooth transition for XP bar */
 }
 
 /* Profile Corner */

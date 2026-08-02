@@ -5,6 +5,7 @@ import { useGame } from '../context/GameContext'
 import { useNotification } from '../context/NotificationContext'
 import { useSound } from '../context/SoundContext'
 import TerminalSimulator from '../components/TerminalSimulator'
+import { useSpring, animated } from '@react-spring/web'
 import BackButton from '../components/BackButton'
 
 export default function Quiz() {
@@ -19,6 +20,7 @@ export default function Quiz() {
     completeLesson,
     nextLifeAt,
     MAX_LIVES,
+    xp, // Pour détecter le gain d'XP et jouer le son
   } = useGame()
   const { addNotification } = useNotification()
 
@@ -27,6 +29,7 @@ export default function Quiz() {
   const [showExplanation, setShowExplanation] = useState(false)
   const [lastCorrect, setLastCorrect] = useState(null)
   const [willNavigateToCourse, setWillNavigateToCourse] = useState(false)
+  const [showXpPop, setShowXpPop] = useState(false) // New state for XP pop animation
   const { playSound } = useSound()
   const [attemptCount, setAttemptCount] = useState(0) // New: tracks attempts for current question
   const [incorrectOptions, setIncorrectOptions] = useState([]) // New: stores options chosen incorrectly
@@ -44,6 +47,16 @@ export default function Quiz() {
       const seconds = remainingSeconds % 60
       setTimeLeft(`${minutes}:${String(seconds).padStart(2, '0')}`)
     }, 1000)
+
+    // XP pop animation logic
+    if (showXpPop) {
+      const xpPopTimer = setTimeout(() => {
+        setShowXpPop(false)
+      }, 1000) // Duration of the XP pop animation
+      return () => clearTimeout(xpPopTimer)
+    }
+
+
 
     return () => clearInterval(intervalId)
   }, [nextLifeAt, lives, MAX_LIVES])
@@ -66,58 +79,44 @@ export default function Quiz() {
   const isLastQuestion = index === questions.length - 1
 
   const handleAnswer = (option) => {
+    // Prevent answering if explanation is shown or option already chosen incorrectly
     if (showExplanation || incorrectOptions.includes(option)) {
       return;
     }
 
     const correct = option === current.answer;
 
-    if (correct) {
-      addXp();
-      addNotification('⚡ +50 XP !', 'success', 2000);
-      playSound('correct');
-      setLastCorrect(true);
-      setShowExplanation(true); // Show explanation immediately on correct answer
-      setAttemptCount(0); // Reset attempts
-      setIncorrectOptions([]); // Reset incorrect options
-    } else {
-      const currentAttemptNumber = attemptCount + 1;
+    if (correct) { // Correct answer on first or second try
+      setShowXpPop(true) // Trigger XP pop animation
+      addXp()
+      addNotification('⚡ +50 XP !', 'success', 2000)
+      playSound('correct')
+      setLastCorrect(true)
+      setShowExplanation(true) // Show explanation immediately on correct answer
+      setAttemptCount(0) // Reset attempts
+      setIncorrectOptions([]) // Reset incorrect options
+    } else { // Incorrect answer
+      setAttemptCount(prev => prev + 1)
+      setIncorrectOptions(prev => [...prev, option])
 
-      if (currentAttemptNumber === 1) { // First incorrect attempt
-        addNotification('❌ Ce n\'est pas ça, réessaie !', 'error', 2000);
-        playSound('incorrect');
-        setLastCorrect(false); // Mark as incorrect for now
-        setIncorrectOptions(prev => [...prev, option]);
-        setAttemptCount(currentAttemptNumber); // Update attempt count
-        // Do NOT show explanation, do NOT lose life yet
-      } else { // Second incorrect attempt (currentAttemptNumber === 2)
-        const nextLives = Math.max(lives - 1, 0);
-        loseLife();
-        addNotification(`❤️ -1 Vie (${nextLives} restantes)`, 'error', 2000);
-        playSound('incorrect');
-        setLastCorrect(false); // Definitely incorrect
-        setShowExplanation(true); // Show explanation
-        setIncorrectOptions(prev => [...prev, option]); // Add the second incorrect option
-        setAttemptCount(0); // Reset attempts for next question
+      if (attemptCount === 0) { // First incorrect attempt (attemptCount was 0 before increment)
+        addNotification('❌ Ce n\'est pas ça, réessaie !', 'error', 2000)
+        playSound('incorrect') // Play sound on first incorrect attempt
+        setLastCorrect(false) // Mark as incorrect for now
+        // Do not show explanation, do not lose life yet
+      } else { // Second incorrect attempt (attemptCount is now 2)
+        const nextLives = Math.max(lives - 1, 0)
+        loseLife()
+        addNotification(`❤️ -1 Vie (${nextLives} restantes)`, 'error', 2000)
+        playSound('incorrect') // Play sound on second incorrect attempt
+        setLastCorrect(false) // Definitely incorrect
+        setShowExplanation(true) // Show explanation
         if (nextLives === 0) {
           setWillNavigateToCourse(true)
         }
       }
     }
   }
-
-  const getOptionClass = (option) => {
-    if (!showExplanation) {
-      return incorrectOptions.includes(option) ? 'disabled-option' : '';
-    }
-    if (option === current.answer) {
-      return 'correct-option';
-    }
-    if (incorrectOptions.includes(option)) {
-      return 'incorrect-option';
-    }
-    return '';
-  };
 
   const handleNext = () => {
     setShowExplanation(false)
@@ -164,6 +163,13 @@ export default function Quiz() {
             <p className="muted">Leçon {lessonId} · Question {index + 1}/{questions.length}</p>
             <h1>{current.question}</h1>
           </div>
+          {showXpPop && (
+            <animated.span
+              className="xp-pop-animation"
+            >
+              +50 XP!
+            </animated.span>
+          )}
           <div className="badge">
             ❤️ Vies : {lives} {timeLeft && <span className="muted" style={{ fontSize: '0.8em', marginLeft: '4px' }}>(+1 dans {timeLeft})</span>}
           </div>
@@ -203,9 +209,9 @@ export default function Quiz() {
               <button
                 key={option}
                 type="button"
-                className={`btn btn-secondary quiz-option ${getOptionClass(option)}`}
+                className={`btn btn-secondary quiz-option ${incorrectOptions.includes(option) ? 'disabled-option' : ''}`}
                 onClick={() => handleAnswer(option)}
-                disabled={incorrectOptions.includes(option) && !showExplanation} // Disable already chosen incorrect options only if explanation is not shown
+                disabled={incorrectOptions.includes(option)} // Disable already chosen incorrect options
               >
                 {option}
               </button>
@@ -216,11 +222,7 @@ export default function Quiz() {
         {showExplanation && (
           <div className="explanation card" style={{ marginTop: 18 }}>
             <h3 style={{ marginBottom: 8 }}>{lastCorrect ? 'Correct !' : 'Pas tout à fait'}</h3>
-            {!lastCorrect && (
-              <p style={{ color: '#4ade80', marginBottom: 8 }}>✅ Bonne réponse : {current.answer}</p>
-            )}
             <p className="muted" style={{ marginBottom: 12 }}>{current.explanation}</p>
-
             <div style={{ display: 'flex', gap: 12 }}>
               <button className="btn btn-primary" onClick={handleNext}>
                 Suivant

@@ -1,7 +1,7 @@
 export const lessons = {
   1: {
     id: 1,
-    icon: '⌘',
+    icon: '🧭', // Compass for exploration
     title: 'Explorer le répertoire courant',
     summary: 'Comprends la base : où tu te trouves et comment regarder les fichiers qui t’entourent.',
     steps: [
@@ -14,7 +14,7 @@ export const lessons = {
   },
   2: {
     id: 2,
-    icon: '◫',
+    icon: '🛠️', // Tools for creation/manipulation
     title: 'Créer, supprimer et lire',
     summary: 'Apprends à manipuler fichiers et dossiers sans te mettre en danger.',
     steps: [
@@ -28,7 +28,7 @@ export const lessons = {
   },
   3: {
     id: 3,
-    icon: '↗',
+    icon: '🗺️', // Map for navigation
     title: 'Navigation avancée et visualisation',
     summary: 'Déplace-toi rapidement et lis des fichiers longs en toute sérénité.',
     steps: [
@@ -41,7 +41,7 @@ export const lessons = {
   },
   4: {
     id: 4,
-    icon: '⌁',
+    icon: '🛡️', // Shield for security/permissions
     title: 'Permissions, propriétaires et sécurité',
     summary: 'Savoir qui peut faire quoi sur les fichiers et comment le changer.',
     steps: [
@@ -54,7 +54,7 @@ export const lessons = {
   },
   5: {
     id: 5,
-    icon: '⌕',
+    icon: '🔍', // Magnifying glass for search
     title: 'Recherche, filtres et historique',
     summary: 'Deviens efficace pour rechercher, filtrer et réutiliser des commandes.',
     steps: [
@@ -67,7 +67,7 @@ export const lessons = {
   },
   6: {
     id: 6,
-    icon: '⚙️',
+    icon: '🧠', // Brain/gear for process management
     title: 'Gestion des processus',
     summary: 'Découvre comment voir et gérer les programmes en cours d’exécution.',
     steps: [

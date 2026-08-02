@@ -35,6 +35,9 @@ export default function BadgeIcon({ type }) {
     case 'flame':
       icon = <path d="M34 7c3 11-6 15-3 23 2 4 6 5 8 9 3-6 8-10 8-19 8 7 10 16 8 25-3 12-13 18-23 18-12 0-23-9-23-23 0-10 6-18 16-25-1 10 2 15 6 18 1-10 8-15 3-26Z" {...common} />
       break
+    case 'penguin':
+      icon = <span role="img" aria-label="penguin">🐧</span>
+      break
     default:
       icon = <circle cx="32" cy="32" r="18" {...common} />
   }

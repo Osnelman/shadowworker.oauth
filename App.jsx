@@ -3,8 +3,8 @@ import AppRoutes from './routes/AppRoutes'
 import { GameProvider } from './context/GameContext'
 import { AuthProvider } from './context/AuthContext'
 import { NotificationProvider } from './context/NotificationContext'
-import NotificationCenter from './components/NotificationCenter'
-import BadgeNotificationListener from './components/BadgeNotificationListener'
+import NotificationCenter from './components/NotificationCenter';
+import GameNotificationListener from './components/BadgeNotificationListener'; // Renamed from BadgeNotificationListener
 import { ThemeProvider } from './context/ThemeContext'
 import LevelUpModal from './components/LevelUpModal'
 import { SoundProvider } from './context/SoundContext'
@@ -17,7 +17,7 @@ export default function App() {
           <SoundProvider>
             <GameProvider>
               <NotificationCenter />
-              <BadgeNotificationListener />
+              <GameNotificationListener />
               <AppRoutes />
               <LevelUpModal />
             </GameProvider>

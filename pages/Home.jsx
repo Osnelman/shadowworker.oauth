@@ -48,7 +48,7 @@ export default function Home() {
 
       <section className="hero-card card">
         <div style={{ marginBottom: 16 }}>
-          <span className="badge">🐧 Linux Quest</span>
+          <span className="badge">Linux Quest</span>
         </div>
 
         <h1>{user?.isGuest ? 'Apprends Linux en jouant' : `Prêt pour la suite, ${user?.name?.split(' ')[0] || 'aventurier'} ?`}</h1>

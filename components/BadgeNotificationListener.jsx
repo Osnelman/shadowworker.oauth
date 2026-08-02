@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { useGame } from '../context/GameContext'
 import { useNotification } from '../context/NotificationContext'
 
-export default function BadgeNotificationListener() {
+export default function GameNotificationListener() {
   const { unlockedBadges, BADGES } = useGame()
   const { addNotification } = useNotification()
   const previousBadgesRef = useRef([])
@@ -34,6 +34,18 @@ export default function BadgeNotificationListener() {
 
     previousBadgesRef.current = unlockedBadges
   }, [unlockedBadges, BADGES, addNotification])
+
+  const { lessonCompletedEvent, clearLessonCompletedEvent } = useGame()
+  useEffect(() => {
+    if (lessonCompletedEvent) {
+      addNotification(
+        `🎉 Leçon ${lessonCompletedEvent} terminée !`,
+        'success',
+        4000
+      )
+      clearLessonCompletedEvent()
+    }
+  }, [lessonCompletedEvent, addNotification, clearLessonCompletedEvent])
 
   return null
 }

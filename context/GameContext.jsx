@@ -151,6 +151,7 @@ export function GameProvider({ children }) {
   const [xpMultiplier, setXpMultiplier] = useState(1)
   const [xpMultiplierExpiresAt, setXpMultiplierExpiresAt] = useState(null)
   const [nextLifeAt, setNextLifeAt] = useState(null)
+  const [lessonCompletedEvent, setLessonCompletedEvent] = useState(null) // New state for lesson completion event
   const { playSound } = useSound()
   const today = getLocalDayKey()
 
@@ -327,9 +328,13 @@ export function GameProvider({ children }) {
   const advanceLesson = () => setCurrentLesson((prev) => Math.min(prev + 1, TOTAL_LESSONS))
 
   const completeLesson = (lessonId) => {
-    setCompletedLessons((prev) =>
-      prev.includes(lessonId) ? prev : [...prev, lessonId]
-    )
+    setCompletedLessons((prev) => {
+      if (!prev.includes(lessonId)) {
+        setLessonCompletedEvent(lessonId) // Trigger event for notification
+        return [...prev, lessonId]
+      }
+      return prev
+    })
   }
 
   const grantLootReward = () => {
@@ -426,6 +431,10 @@ export function GameProvider({ children }) {
     setLevelUpEvent(null)
   }
 
+  const clearLessonCompletedEvent = () => {
+    setLessonCompletedEvent(null)
+  }
+
   // Check for new badges when game state changes
   useEffect(() => {
     if (loadedUserId !== user?.id) return
@@ -453,6 +462,8 @@ export function GameProvider({ children }) {
         rank,
         recentXpGain,
         levelUpEvent,
+        lessonCompletedEvent, // Expose lesson completed event
+        clearLessonCompletedEvent, // Expose clear function
         clearLevelUpEvent,
         lootState,
         nextLifeAt,
