@@ -4,8 +4,7 @@ import { quizzes } from '../data/quizzes'
 import { useGame } from '../context/GameContext'
 import { useNotification } from '../context/NotificationContext'
 import { useSound } from '../context/SoundContext'
-import TerminalSimulator from '../components/TerminalSimulator'
-import { useSpring, animated } from '@react-spring/web'
+import TerminalSimulator from '../components/TerminalSimulator' // Keep this import
 import BackButton from '../components/BackButton'
 
 export default function Quiz() {
@@ -24,8 +23,7 @@ export default function Quiz() {
   const [index, setIndex] = useState(0)
   const [showExplanation, setShowExplanation] = useState(false)
   const [lastCorrect, setLastCorrect] = useState(null)
-  const [willNavigateToCourse, setWillNavigateToCourse] = useState(false)
-  const [showXpPop, setShowXpPop] = useState(false) // New state for XP pop animation
+  const [willNavigateToCourse, setWillNavigateToCourse] = useState(false) // Keep this state for navigation logic
   const { playSound } = useSound()
   const [attemptCount, setAttemptCount] = useState(0) // New: tracks attempts for current question
 
@@ -47,15 +45,6 @@ export default function Quiz() {
       setTimeLeft(`${minutes}:${String(seconds).padStart(2, '0')}`)
     }, 1000)
 
-    // XP pop animation logic
-    if (showXpPop) {
-      const xpPopTimer = setTimeout(() => {
-        setShowXpPop(false)
-      }, 1000) // Duration of the XP pop animation
-      return () => clearTimeout(xpPopTimer)
-    }
-
-
 
     return () => clearInterval(intervalId)
   }, [nextLifeAt, lives, MAX_LIVES])
@@ -65,9 +54,6 @@ export default function Quiz() {
     setIndex(0);
     setAttemptCount(0);
     // Removed incorrectOptions state as it's QCM specific
-    setShowExplanation(false);
-    setLastCorrect(null);
-    setWillNavigateToCourse(false);
   }, [lessonId]);
 
   // Remove showXpPop and related logic as XP gain is handled by TerminalSimulator's onSuccess
@@ -142,12 +128,11 @@ export default function Quiz() {
           <div>
             <p className="muted">Leçon {lessonId} · Question {index + 1}/{questions.length}</p>
             <h1>{current.question}</h1>
-          )}
+          </div>
           <div className="badge">
             ❤️ Vies : {lives} {timeLeft && <span className="muted" style={{ fontSize: '0.8em', marginLeft: '4px' }}>(+1 dans {timeLeft})</span>}
           </div>
         </div>
-
         {current.type === 'terminal' && (
           <>
             <div className="terminal-tip card" style={{ marginBottom: 16 }}>
