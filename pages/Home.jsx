@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGame } from '../context/GameContext'
+import { useSpring, animated } from '@react-spring/web'
 import { useAuth } from '../context/AuthContext'
 import ProfileCorner from '../components/ProfileCorner'
 import { lessons, lessonIds } from '../data/lessons.jsx'
@@ -11,6 +12,13 @@ export default function Home() {
   const { user } = useAuth()
   const nextLesson = lessonIds.find((id) => !completedLessons.includes(id)) || lessonIds[lessonIds.length - 1]
   const [timeLeft, setTimeLeft] = useState(null)
+  const [previousStreak, setPreviousStreak] = useState(loginStreak)
+
+  const streakSpring = useSpring({
+    from: { scale: 1 },
+    to: { scale: loginStreak > previousStreak ? 1.2 : 1 },
+    config: { tension: 300, friction: 10 },
+  })
 
   useEffect(() => {
     if (!nextLifeAt || lives >= MAX_LIVES) {
@@ -26,6 +34,10 @@ export default function Home() {
     }, 1000)
 
     return () => clearInterval(intervalId)
+  }, [nextLifeAt, lives, MAX_LIVES])
+
+  useEffect(() => {
+    setPreviousStreak(loginStreak)
   }, [nextLifeAt, lives, MAX_LIVES])
 
   // Les invités peuvent accéder à Home aussi (ProfileCorner les affiche pas)
@@ -104,7 +116,9 @@ export default function Home() {
             <span className="section-kicker">Ton parcours</span>
             <h2>La carte d’aventure</h2>
           </div>
-          <div className="streak-pill">🔥 {loginStreak} jour{loginStreak > 1 ? 's' : ''} d’affilée</div>
+          <animated.div className="streak-pill" style={streakSpring}>
+            🔥 {loginStreak} jour{loginStreak > 1 ? 's' : ''} d’affilée
+          </animated.div>
         </div>
         <p className="muted">Une étape à la fois : termine une leçon pour ouvrir la suivante.</p>
 

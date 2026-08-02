@@ -180,11 +180,18 @@ export function GameProvider({ children }) {
         setXpMultiplier(1)
         setXpMultiplierExpiresAt(null)
         setLoginStreak(1)
-        setLastActiveDate(getLocalDayKey())
+        setLastActiveDate(today)
         setCompletedDailyMissionDate(null)
         setNextLifeAt(null)
       } else {
         const data = JSON.parse(raw)
+        const savedLastActiveDate = data.lastActiveDate
+        const savedStreak = Number(data.loginStreak) || 0
+        const nextStreak = savedLastActiveDate === today
+          ? Math.max(1, savedStreak)
+          : savedLastActiveDate === getPreviousDayKey()
+            ? savedStreak + 1
+            : 1
         setLives(data.lives ?? MAX_LIVES)
         setXp(data.xp ?? DEFAULT_STATE.xp)
         setCurrentLesson(data.currentLesson ?? DEFAULT_STATE.currentLesson)
@@ -194,15 +201,8 @@ export function GameProvider({ children }) {
         setUnlockedBadges(Array.isArray(data.unlockedBadges) ? data.unlockedBadges : DEFAULT_STATE.unlockedBadges)
         setLootState(data.lootState || DEFAULT_LOOT_STATE)
         setXpMultiplier(data.xpMultiplier || 1)
-        setXpMultiplierExpiresAt(data.xpMultiplierExpiresAt || null)
+        setXpMultiplierExpiresAt(data.xpMultiplierExpiresAt ? new Date(data.xpMultiplierExpiresAt) : null)
         setNextLifeAt(data.nextLifeAt || null)
-        const today = getLocalDayKey()
-        const savedStreak = Number(data.loginStreak) || 0
-        const nextStreak = data.lastActiveDate === today
-          ? Math.max(1, savedStreak)
-          : data.lastActiveDate === getPreviousDayKey()
-            ? savedStreak + 1
-            : 1
         setLoginStreak(nextStreak)
         setLastActiveDate(today)
         setCompletedDailyMissionDate(data.completedDailyMissionDate ?? null)
@@ -220,7 +220,7 @@ export function GameProvider({ children }) {
       setXpMultiplier(1)
       setXpMultiplierExpiresAt(null)
       setLoginStreak(1)
-      setLastActiveDate(getLocalDayKey())
+      setLastActiveDate(today)
       setCompletedDailyMissionDate(null)
       setNextLifeAt(null)
     }
