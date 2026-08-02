@@ -17,7 +17,7 @@ export default function Quiz() {
     resetLives,
     advanceLesson,
     nextLifeAt,
-    completeLesson, // Ajout de completeLesson
+    completeLesson,
     MAX_LIVES,
   } = useGame()
   const { addNotification } = useNotification()
