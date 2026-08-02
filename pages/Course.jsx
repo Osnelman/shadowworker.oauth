@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useGame } from '../context/GameContext'
 import { missions } from '../data/missions'
 import { lessons, lessonIds } from '../data/lessons.jsx'
+import BackButton from '../components/BackButton'
 
 export default function Course() {
   const { lessonId } = useParams()
@@ -57,9 +58,7 @@ export default function Course() {
           <button className="btn btn-primary" onClick={() => navigate(`/quiz/${lessonId}`)}>
             Tester mes connaissances
           </button>
-          <button className="btn btn-secondary" onClick={() => navigate('/home')}>
-            Retour à l’accueil
-          </button>
+          <BackButton to="/home" />
           {isSectionEnd && sectionId && (
             <button className="btn btn-primary" onClick={() => navigate(`/mission/${sectionId}`)}>
               Lancer la mission : {section.title}

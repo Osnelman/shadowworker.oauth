@@ -129,7 +129,7 @@ export default function Mission() {
           >
             {missionCompleted ? 'Voir le résumé' : 'Marquer la mission comme terminée'}
           </button>
-          <button className="btn btn-secondary" onClick={() => navigate(-1)}>Retour</button>
+          <BackButton />
         </div>
       </section>
     </main>

@@ -5,6 +5,7 @@ import { lessonIds } from '../data/lessons'
 import Lottie from 'lottie-react'
 import trophyAnimation from '../Trophy Badge award Animation.json'
 import fireworksAnimation from '../Fireworks.json'
+import BackButton from '../components/BackButton'
 
 export default function Result() {
   const navigate = useNavigate()
@@ -46,7 +47,7 @@ export default function Result() {
           >
             Revenir à l’accueil
           </button>
-          <button className="btn btn-secondary" onClick={() => navigate('/home')}>Voir mon tableau de bord</button>
+          <BackButton to="/home">Voir mon tableau de bord</BackButton>
         </div>
       </section>
     </main>

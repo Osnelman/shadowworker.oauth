@@ -4,6 +4,7 @@ import { useGame } from '../context/GameContext'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import Lottie from 'lottie-react'
 import fireStreakAnimation from '../Fire Streak.json'
+import BackButton from '../components/BackButton'
 
 export default function Progress() {
   const navigate = useNavigate()
@@ -20,8 +21,8 @@ export default function Progress() {
 
   return (
     <div className="page">
-      <header className="page-header">
-        <button className="btn-back" onClick={() => navigate('/home')}>← Retour</button>
+      <header className="page-header" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <BackButton to="/home" />
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <h1>📊 Ma progression</h1>
           <div aria-hidden="true" style={{ width: 64, height: 64 }}>

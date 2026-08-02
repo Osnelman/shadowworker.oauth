@@ -3,20 +3,18 @@ import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../context/ThemeContext'
 import { useAuth } from '../context/AuthContext'
 import { useSound } from '../context/SoundContext'
+import BackButton from '../components/BackButton'
 
 export default function Settings() {
   const navigate = useNavigate()
   const { theme, setTheme, toggleTheme } = useTheme()
   const { reloadGoogle } = useAuth()
   const { isSoundEnabled, toggleSound } = useSound()
-
   return (
     <main className="page">
       <section className="card" style={{ maxWidth: 720, margin: '0 auto', padding: 24 }}>
-        <div style={{ marginBottom: 18, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-          <button className="btn btn-secondary" onClick={() => navigate(-1)}>
-            ← Retour
-          </button>
+        <div style={{ marginBottom: 18, display: 'flex', alignItems: 'center', gap: 12 }}>
+          <BackButton />
           <h1 style={{ margin: 0 }}>Paramètres</h1>
         </div>
 

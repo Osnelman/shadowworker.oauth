@@ -3,18 +3,18 @@ import { useNavigate } from 'react-router-dom'
 import { useGame } from '../context/GameContext'
 import Lottie from 'lottie-react'
 import trophyAnimation from '../Trophy Badge award Animation.json'
+import BackButton from '../components/BackButton'
 import BadgeIcon from '../components/BadgeIcon'
 
 export default function Badges() {
   const navigate = useNavigate()
   const { unlockedBadges, BADGES } = useGame()
-
   const unlockedSet = new Set(unlockedBadges)
 
   return (
     <div className="page">
-      <header className="page-header">
-        <button className="btn-back" onClick={() => navigate('/home')}>← Retour</button>
+      <header className="page-header" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <BackButton to="/home" />
         <h1>🏆 Mes Badges</h1>
       </header>
 

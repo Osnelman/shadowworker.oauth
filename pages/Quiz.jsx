@@ -5,6 +5,7 @@ import { useGame } from '../context/GameContext'
 import { useNotification } from '../context/NotificationContext'
 import { useSound } from '../context/SoundContext'
 import TerminalSimulator from '../components/TerminalSimulator'
+import BackButton from '../components/BackButton'
 
 export default function Quiz() {
   const { lessonId } = useParams()
@@ -18,7 +19,6 @@ export default function Quiz() {
     completeLesson,
     nextLifeAt,
     MAX_LIVES,
-    xp, // Pour détecter le gain d'XP et jouer le son
   } = useGame()
   const { addNotification } = useNotification()
 
@@ -28,6 +28,8 @@ export default function Quiz() {
   const [lastCorrect, setLastCorrect] = useState(null)
   const [willNavigateToCourse, setWillNavigateToCourse] = useState(false)
   const { playSound } = useSound()
+  const [attemptCount, setAttemptCount] = useState(0) // New: tracks attempts for current question
+  const [incorrectOptions, setIncorrectOptions] = useState([]) // New: stores options chosen incorrectly
   const [timeLeft, setTimeLeft] = useState(null)
 
   useEffect(() => {
@@ -46,6 +48,16 @@ export default function Quiz() {
     return () => clearInterval(intervalId)
   }, [nextLifeAt, lives, MAX_LIVES])
 
+  // Reset quiz state when lessonId changes
+  useEffect(() => {
+    setIndex(0);
+    setAttemptCount(0);
+    setIncorrectOptions([]);
+    setShowExplanation(false);
+    setLastCorrect(null);
+    setWillNavigateToCourse(false);
+  }, [lessonId]);
+
   if (!questions.length) {
     return <div className="page card p-6 text-white">Aucun quiz disponible pour cette leçon.</div>
   }
@@ -54,35 +66,63 @@ export default function Quiz() {
   const isLastQuestion = index === questions.length - 1
 
   const handleAnswer = (option) => {
-    const correct = option === current.answer
+    if (showExplanation || incorrectOptions.includes(option)) {
+      return;
+    }
 
-    setLastCorrect(correct)
+    const correct = option === current.answer;
 
     if (correct) {
-      addXp()
-      addNotification('⚡ +50 XP !', 'success', 2000)
-      playSound('correct')
+      addXp();
+      addNotification('⚡ +50 XP !', 'success', 2000);
+      playSound('correct');
+      setLastCorrect(true);
+      setShowExplanation(true); // Show explanation immediately on correct answer
+      setAttemptCount(0); // Reset attempts
+      setIncorrectOptions([]); // Reset incorrect options
     } else {
-      const nextLives = Math.max(lives - 1, 0)
-      loseLife()
-      addNotification(`❤️ -1 Vie (${nextLives} restantes)`, 'error', 2000)
-      playSound('incorrect')
-    }
+      const currentAttemptNumber = attemptCount + 1;
 
-    let willNavCourse = false
-    if (!correct) {
-      const nextLives = Math.max(lives - 1, 0)
-      if (nextLives === 0) {
-        willNavCourse = true
+      if (currentAttemptNumber === 1) { // First incorrect attempt
+        addNotification('❌ Ce n\'est pas ça, réessaie !', 'error', 2000);
+        playSound('incorrect');
+        setLastCorrect(false); // Mark as incorrect for now
+        setIncorrectOptions(prev => [...prev, option]);
+        setAttemptCount(currentAttemptNumber); // Update attempt count
+        // Do NOT show explanation, do NOT lose life yet
+      } else { // Second incorrect attempt (currentAttemptNumber === 2)
+        const nextLives = Math.max(lives - 1, 0);
+        loseLife();
+        addNotification(`❤️ -1 Vie (${nextLives} restantes)`, 'error', 2000);
+        playSound('incorrect');
+        setLastCorrect(false); // Definitely incorrect
+        setShowExplanation(true); // Show explanation
+        setIncorrectOptions(prev => [...prev, option]); // Add the second incorrect option
+        setAttemptCount(0); // Reset attempts for next question
+        if (nextLives === 0) {
+          setWillNavigateToCourse(true)
+        }
       }
     }
-
-    setWillNavigateToCourse(willNavCourse)
-    setShowExplanation(true)
   }
+
+  const getOptionClass = (option) => {
+    if (!showExplanation) {
+      return incorrectOptions.includes(option) ? 'disabled-option' : '';
+    }
+    if (option === current.answer) {
+      return 'correct-option';
+    }
+    if (incorrectOptions.includes(option)) {
+      return 'incorrect-option';
+    }
+    return '';
+  };
 
   const handleNext = () => {
     setShowExplanation(false)
+    setAttemptCount(0) // Reset for new question
+    setIncorrectOptions([]) // Reset for new question
 
     if (lastCorrect) {
       if (isLastQuestion) {
@@ -115,6 +155,9 @@ export default function Quiz() {
 
   return (
     <main className="page quiz-page">
+      <div style={{ position: 'absolute', top: 20, left: 20 }}>
+        <BackButton />
+      </div>
       <section className="card quiz-card">
         <div className="quiz-header">
           <div>
@@ -160,8 +203,9 @@ export default function Quiz() {
               <button
                 key={option}
                 type="button"
-                className="btn btn-secondary quiz-option"
+                className={`btn btn-secondary quiz-option ${getOptionClass(option)}`}
                 onClick={() => handleAnswer(option)}
+                disabled={incorrectOptions.includes(option) && !showExplanation} // Disable already chosen incorrect options only if explanation is not shown
               >
                 {option}
               </button>
@@ -172,7 +216,11 @@ export default function Quiz() {
         {showExplanation && (
           <div className="explanation card" style={{ marginTop: 18 }}>
             <h3 style={{ marginBottom: 8 }}>{lastCorrect ? 'Correct !' : 'Pas tout à fait'}</h3>
+            {!lastCorrect && (
+              <p style={{ color: '#4ade80', marginBottom: 8 }}>✅ Bonne réponse : {current.answer}</p>
+            )}
             <p className="muted" style={{ marginBottom: 12 }}>{current.explanation}</p>
+
             <div style={{ display: 'flex', gap: 12 }}>
               <button className="btn btn-primary" onClick={handleNext}>
                 Suivant

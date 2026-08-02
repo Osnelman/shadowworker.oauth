@@ -166,7 +166,7 @@ export function GameProvider({ children }) {
     }
 
     try {
-      const raw = localStorage.getItem(`linux-quest:${user.id}`)
+      const raw = localStorage.getItem(`linux-quest:${user.id}`);
 
       if (!raw) {
         // Nouvel utilisateur sans sauvegarde : on réinitialise explicitement
@@ -181,7 +181,7 @@ export function GameProvider({ children }) {
         setXpMultiplier(1)
         setXpMultiplierExpiresAt(null)
         setLoginStreak(1)
-        setLastActiveDate(today)
+        setLastActiveDate(today);
         setCompletedDailyMissionDate(null)
         setNextLifeAt(null)
       } else {
@@ -205,7 +205,7 @@ export function GameProvider({ children }) {
         setXpMultiplierExpiresAt(data.xpMultiplierExpiresAt ? new Date(data.xpMultiplierExpiresAt) : null)
         setNextLifeAt(data.nextLifeAt || null)
         setLoginStreak(nextStreak)
-        setLastActiveDate(today)
+        setLastActiveDate(today);
         setCompletedDailyMissionDate(data.completedDailyMissionDate ?? null)
       }
     } catch (e) {
@@ -221,13 +221,13 @@ export function GameProvider({ children }) {
       setXpMultiplier(1)
       setXpMultiplierExpiresAt(null)
       setLoginStreak(1)
-      setLastActiveDate(today)
+      setLastActiveDate(today);
       setCompletedDailyMissionDate(null)
       setNextLifeAt(null)
     }
 
     setLoadedUserId(user.id)
-  }, [user])
+  }, [user, today]);
 
   // Sauvegarde : uniquement une fois le chargement terminé pour le user courant
   useEffect(() => {

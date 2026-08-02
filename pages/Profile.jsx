@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { useGame } from '../context/GameContext'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import BadgeIcon from '../components/BadgeIcon'
+import BackButton from '../components/BackButton'
 
 export default function Profile() {
   const navigate = useNavigate()
@@ -31,8 +32,8 @@ export default function Profile() {
 
   return (
     <div className="page">
-      <header className="page-header">
-        <button className="btn-back" onClick={() => navigate('/home')}>← Retour</button>
+      <header className="page-header" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <BackButton to="/home" />
         <h1>Mon Profil</h1>
       </header>
 

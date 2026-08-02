@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Lottie from 'lottie-react'
 import { useAuth } from '../context/AuthContext'
 import learningAnimation from '../Learning.json'
+import BackButton from '../components/BackButton'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -29,7 +30,10 @@ export default function Login() {
   }
 
   return (
-    <main className="page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+    <main className="page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+      <div style={{ position: 'absolute', top: 20, left: 20 }}>
+        <BackButton />
+      </div>
       <section className="card login-card" style={{ maxWidth: 420, padding: '48px', textAlign: 'center' }}>
         <div aria-hidden="true" style={{ width: 180, height: 180, margin: '-32px auto 8px' }}>
           <Lottie animationData={learningAnimation} loop />

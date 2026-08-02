@@ -2,6 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getDailyMission } from '../data/dailyMissions'
 import { useGame } from '../context/GameContext'
+import BackButton from '../components/BackButton'
 
 export default function DailyMission() {
   const navigate = useNavigate()
@@ -34,8 +35,8 @@ export default function DailyMission() {
           >
             Réclamer mes 75 XP
           </button>
-        )}
-        <button className="btn btn-secondary" onClick={() => navigate('/home')}>Retour à la carte</button>
+        )} {/* Replaced the custom button with BackButton */}
+        <BackButton to="/home">Retour à la carte</BackButton>
       </section>
     </main>
   )
