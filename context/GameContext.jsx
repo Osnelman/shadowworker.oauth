@@ -152,6 +152,7 @@ export function GameProvider({ children }) {
   const [xpMultiplierExpiresAt, setXpMultiplierExpiresAt] = useState(null)
   const [nextLifeAt, setNextLifeAt] = useState(null)
   const { playSound } = useSound()
+  const today = getLocalDayKey()
 
   // Identifie l'utilisateur dont la progression est réellement chargée.
   const [loadedUserId, setLoadedUserId] = useState(null)
