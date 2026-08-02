@@ -14,14 +14,14 @@ export default function App() {
     <NotificationProvider>
       <ThemeProvider>
         <AuthProvider>
-          <GameProvider>
-            <SoundProvider>
+          <SoundProvider>
+            <GameProvider>
               <NotificationCenter />
               <BadgeNotificationListener />
               <AppRoutes />
               <LevelUpModal />
-            </SoundProvider>
-          </GameProvider>
+            </GameProvider>
+          </SoundProvider>
         </AuthProvider>
       </ThemeProvider>
     </NotificationProvider>
