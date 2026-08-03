@@ -17,10 +17,10 @@ export default function Quiz() {
     resetLives,
     advanceLesson,
     nextLifeAt,
-    completeLesson, // Gardons une seule occurrence de completeLesson
+    completeLesson, // Assurez-vous que completeLesson est déstructuré ici
     MAX_LIVES,
-  } = useGame(); // Déstructuration correcte
-  const { addNotification } = useNotification()
+  } = useGame(); // Appel unique à useGame()
+  const { addNotification } = useNotification();
   const [index, setIndex] = useState(0)
   const [showExplanation, setShowExplanation] = useState(false)
   const [lastCorrect, setLastCorrect] = useState(null)
@@ -94,7 +94,7 @@ export default function Quiz() {
 
     if (lastCorrect) {
       if (isLastQuestion) {
-        completeLesson(Number(lessonId)); // Utilisation de la fonction déstructurée
+        completeLesson(Number(lessonId)); // Utilisation de la fonction directement déstructurée
         // resetLives() // Lives are reset when navigating to result or course
         advanceLesson()
         navigate('/result')
