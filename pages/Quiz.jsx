@@ -17,9 +17,9 @@ export default function Quiz() {
     resetLives,
     advanceLesson,
     nextLifeAt,
-    completeLesson,
+    completeLesson, // Gardons une seule occurrence de completeLesson
     MAX_LIVES,
-  } = useGame()
+  } = useGame(); // Déstructuration correcte
   const { addNotification } = useNotification()
   const [index, setIndex] = useState(0)
   const [showExplanation, setShowExplanation] = useState(false)
@@ -94,7 +94,7 @@ export default function Quiz() {
 
     if (lastCorrect) {
       if (isLastQuestion) {
-        completeLesson(Number(lessonId))
+        completeLesson(Number(lessonId)); // Utilisation de la fonction déstructurée
         // resetLives() // Lives are reset when navigating to result or course
         advanceLesson()
         navigate('/result')
