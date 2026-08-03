@@ -102,7 +102,7 @@ export const missions = {
   // Nouvelle mission pour la leçon 9 (Tâches planifiées avec Cron et At)
   archive: {
     title: 'Mission : Archivage et compression',
-    lessons: [13],
+    lessons: [13], // Corrected to new lesson ID
     mission: {
       description: 'Compresse et archive des fichiers pour optimiser l\'espace et les transferts.',
       tasks: [
@@ -115,7 +115,7 @@ export const missions = {
   // Nouvelle mission pour la leçon 10 (Connexions sécurisées avec SSH)
   automation: {
     title: 'Mission : Automatisation des tâches',
-    lessons: [9],
+    lessons: [9], // Corrected to new lesson ID
     mission: {
       description: 'Planifie des commandes pour qu\'elles s\'exécutent automatiquement.',
       tasks: [
@@ -128,7 +128,7 @@ export const missions = {
   // Nouvelle mission pour la leçon 11 (Réseau de base et diagnostic)
   text_processing: {
     title: 'Mission : Maître du traitement de texte',
-    lessons: [14],
+    lessons: [14], // Corrected to new lesson ID
     mission: {
       description: 'Utilise `sed` et `awk` pour manipuler et extraire des informations de fichiers texte.',
       tasks: [
@@ -141,7 +141,7 @@ export const missions = {
   // Nouvelle mission pour la leçon 12 (Analyse et surveillance des journaux)
   ssh_remote: {
     title: 'Mission : Accès distant sécurisé',
-    lessons: [10],
+    lessons: [10], // Corrected to new lesson ID
     mission: {
       description: 'Connecte-toi à des serveurs distants et transfère des fichiers en toute sécurité.',
       tasks: [
@@ -154,7 +154,7 @@ export const missions = {
   // Nouvelle mission pour la leçon 13 (Archivage et compression de données)
   network_basics: {
     title: 'Mission : Fondamentaux du réseau',
-    lessons: [11],
+    lessons: [11], // Corrected to new lesson ID
     mission: {
       description: 'Diagnostique la connectivité et explore les bases du réseau Linux.',
       tasks: [
@@ -167,7 +167,7 @@ export const missions = {
   // Nouvelle mission pour la leçon 14 (Traitement de texte avancé avec Sed et Awk)
   logs_monitoring: {
     title: 'Mission : Analyse des journaux',
-    lessons: [12], // Updated to new lesson ID
+    lessons: [12], // Corrected to new lesson ID
     mission: {
       description: 'Apprends à lire et surveiller les logs pour diagnostiquer les problèmes système.',
       tasks: [
@@ -193,7 +193,7 @@ export const missions = {
   // Nouvelle mission pour la leçon 16 (Gestion de l'espace disque et des systèmes de fichiers)
   disk_management: {
     title: 'Mission : Gestion de l\'espace disque',
-    lessons: [16],
+    lessons: [16], // Corrected to new lesson ID
     mission: {
       description: 'Gère l\'espace disque et comprends l\'organisation des systèmes de fichiers.',
       tasks: [
@@ -206,7 +206,7 @@ export const missions = {
   // Nouvelle mission pour la leçon 17 (Permissions avancées et Sudo)
   advanced_permissions: {
     title: 'Mission : Sécurisation avancée',
-    lessons: [17],
+    lessons: [17], // Corrected to new lesson ID
     mission: {
       description: 'Applique des permissions numériques et utilise `sudo` de manière sécurisée.',
       tasks: [
@@ -219,7 +219,7 @@ export const missions = {
   // Nouvelle mission pour la leçon 18 (Sécurité réseau et reconnaissance)
   network_security_recon: {
     title: 'Mission : Reconnaissance et sécurité réseau',
-    lessons: [18], // New mission for lesson 18
+    lessons: [18],
     mission: {
       description: 'Explore les outils de reconnaissance réseau et les principes éthiques de la cybersécurité.',
       tasks: [
@@ -232,7 +232,7 @@ export const missions = {
   // Nouvelle mission pour la leçon 19 (Archivage avancé et synchronisation)
   advanced_archive_sync: {
     title: 'Mission : Archivage avancé et synchronisation',
-    lessons: [19], // New mission for lesson 19
+    lessons: [19],
     mission: {
       description: 'Maîtrise les techniques avancées d\'archivage et de synchronisation de fichiers.',
       tasks: [
@@ -244,7 +244,7 @@ export const missions = {
   // Nouvelle mission pour la leçon 20 (Scripting Bash avancé)
   bash_scripting: {
     title: 'Mission : Scripting Bash avancé',
-    lessons: [20], // New mission for lesson 20
+    lessons: [20],
     mission: {
       description: 'Écris des scripts Bash complexes pour automatiser des tâches d\'administration système.',
       tasks: [

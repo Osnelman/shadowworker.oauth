@@ -207,7 +207,7 @@ export function GameProvider({ children }) {
         setLootState(data.lootState || DEFAULT_LOOT_STATE)
         setXpMultiplier(data.xpMultiplier || 1)
         setXpMultiplierExpiresAt(data.xpMultiplierExpiresAt ? new Date(data.xpMultiplierExpiresAt) : null)
-        setNextLifeAt(data.nextLifeAt || null)
+        setNextLifeAt(data.nextLifeAt ? new Date(data.nextLifeAt) : null) // Convert to Date object
         setLoginStreak(nextStreak)
         setLastActiveDate(today);
         setCompletedDailyMissionDate(data.completedDailyMissionDate ?? null)

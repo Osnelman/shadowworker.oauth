@@ -2005,13 +2005,13 @@ button:focus,
   border: 1px solid rgba(255, 179, 71, 0.18);
 }
 .terminal-screen {
-  min-height: 180px;
-  max-height: 320px;
+  min-height: 150px; /* Slightly smaller min-height */
+  max-height: 300px; /* Slightly smaller max-height */
   overflow: auto;
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
   margin-bottom: 12px;
-  background: rgba(0, 0, 0, 0.15);
+  background: #000; /* Noir foncé pour l'écran du terminal */
   border: 1px solid rgba(255, 179, 71, 0.16);
   padding: 14px;
   border-radius: 12px;
@@ -2019,8 +2019,8 @@ button:focus,
 .terminal-input { display:flex; gap:8px; align-items:center }
 .prompt { color: var(--green-phosphor); font-weight: 700; }
 .input { flex:1; background:transparent; border:1px solid rgba(255, 179, 71, 0.22); color:inherit; outline:none; padding: 10px 12px; border-radius: 10px; }
-.term-cmd { color:#ffd58c }
-.term-out { color:#f8e2b8; opacity:0.95 }
+.term-cmd { color: #7cff62; } /* Green for commands */
+.term-out { color: #f8fafc; opacity: 0.9; } /* Light text for output */
 
 .terminal-tip {
   background: rgba(255, 255, 255, 0.05);

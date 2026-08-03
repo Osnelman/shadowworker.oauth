@@ -34,27 +34,29 @@ export default function Quiz() {
   const [timeLeft, setTimeLeft] = useState(null)
 
   useEffect(() => {
-    if (!nextLifeAt || lives >= MAX_LIVES) {
+    if (!nextLifeAt || lives >= MAX_LIVES || !(nextLifeAt instanceof Date)) { // Check if nextLifeAt is a valid Date object
       setTimeLeft(null)
       return
     }
 
     const intervalId = setInterval(() => {
-      const remainingSeconds = Math.max(0, Math.round((nextLifeAt - Date.now()) / 1000))
+      const remainingSeconds = Math.max(0, Math.round((nextLifeAt.getTime() - Date.now()) / 1000))
       const minutes = Math.floor(remainingSeconds / 60)
       const seconds = remainingSeconds % 60
       setTimeLeft(`${minutes}:${String(seconds).padStart(2, '0')}`)
     }, 1000)
 
-
     return () => clearInterval(intervalId)
-  }, [nextLifeAt, lives, MAX_LIVES])
+  }, [nextLifeAt, lives, MAX_LIVES, setTimeLeft])
 
   // Reset quiz state when lessonId changes
   useEffect(() => {
     setIndex(0);
     setAttemptCount(0);
     // Removed incorrectOptions state as it's QCM specific
+    setShowExplanation(false);
+    setLastCorrect(null);
+    setWillNavigateToCourse(false);
   }, [lessonId]);
 
   // Remove showXpPop and related logic as XP gain is handled by TerminalSimulator's onSuccess

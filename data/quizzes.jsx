@@ -4,7 +4,7 @@ export const quizzes = {
   1: [
     {
       type: 'terminal',
-      question: 'Quelle commande affiche le dossier courant ?', // This is a conceptual question, no validation needed for terminal
+      question: 'Quelle commande affiche le dossier courant ?',
     },
     {
       type: 'terminal',
@@ -58,18 +58,13 @@ export const quizzes = {
   2: [
     {
       type: 'terminal',
-      question: 'Quelle commande crée un dossier ?', explanation: "`mkdir nom_dossier` crée un répertoire. Pour créer des arborescences, utilisez `mkdir -p parent/enfant`.", validate: (typedCommand, output, fs) => {
-        const { cmd, args } = parseCommand(typedCommand);
-        return cmd === 'mkdir' && args.length > 0 && fsEntryExists(fs, `/${args[0]}`, 'dir');
+      question: 'Quelle commande crée un dossier ?', explanation: "`mkdir nom_dossier` crée un répertoire. Pour créer des arborescences, utilisez `mkdir -p parent/enfant`.", validate: (typedCommand, output, fs) => { const { cmd, args } = parseCommand(typedCommand); return cmd === 'mkdir' && args.length > 0 && fsEntryExists(fs, `/${args[0]}`, 'dir');
       },
       expectedCommand: 'mkdir nom_dossier',
     },
     {
       type: 'terminal',
-      question: 'Comment supprimer un fichier ?', explanation: "`rm fichier` supprime un fichier. Attention : c'est définitif (sauf avec des sauvegardes). Pour supprimer des dossiers, utilisez `rm -r`.", initialFiles: { 'file_to_delete.txt': '' },
-      validate: (typedCommand, output, fs) => {
-        const { cmd, args } = parseCommand(typedCommand);
-        return cmd === 'rm' && args.includes('file_to_delete.txt') && !fsEntryExists(fs, '/file_to_delete.txt');
+      question: 'Comment supprimer un fichier ?', explanation: "`rm fichier` supprime un fichier. Attention : c'est définitif (sauf avec des sauvegardes). Pour supprimer des dossiers, utilisez `rm -r`.", initialFiles: { 'file_to_delete.txt': '' }, validate: (typedCommand, output, fs) => { const { cmd, args } = parseCommand(typedCommand); return cmd === 'rm' && args.includes('file_to_delete.txt') && !fsEntryExists(fs, '/file_to_delete.txt');
       },
       expectedCommand: 'rm file_to_delete.txt',
     },
@@ -111,7 +106,7 @@ export const quizzes = {
   3: [
     {
       type: 'terminal',
-      question: 'Quelle commande change le dossier courant ?', explanation: "`cd chemin` vous déplace vers un autre répertoire. `cd ..` remonte d'un niveau et `cd -` revient au précédent.",
+      question: 'Quelle commande change le dossier courant ?', explanation: "`cd chemin` vous déplace vers un autre répertoire. `cd ..` remonte d'un niveau et `cd -` revient au précédent.", expectedCommand: 'cd /tmp', // Added expectedCommand
     },
     {
       type: 'terminal',
