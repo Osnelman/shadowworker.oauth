@@ -1373,6 +1373,8 @@ button:focus,
 .premium-modal .btn-secondary {
   width: 100%;
 }
+
+.adventure-map {
   position: relative;
   display: grid;
   grid-template-columns: repeat(5, minmax(110px, 1fr));

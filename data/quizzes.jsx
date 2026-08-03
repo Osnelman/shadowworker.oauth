@@ -1,4 +1,4 @@
-import { matchesCommand, fsEntryExists, fsFileContentIncludes, normalizeCommand, parseCommand } from '../utils/quizHelpers';
+import { matchesCommand, fsEntryExists, fsFileContentIncludes, normalizeCommand, parseCommand } from '../components/quizHelpers';
 
 export const quizzes = {
   1: [
@@ -69,18 +69,22 @@ export const quizzes = {
       expectedCommand: 'rm file_to_delete.txt',
     },
     {
-      explanation: "`mkdir -p` crée tous les dossiers manquants dans l’arborescence. Pratique pour gagner du temps et éviter des erreurs.", type: 'terminal', question: 'Marc veut créer un dossier `projet` et un sous-dossier `code` en une seule fois. Tape la commande correcte.', initialFiles: {},
+      explanation: "`mkdir -p` crée tous les dossiers manquants dans l’arborescence. Pratique pour gagner du temps et éviter des erreurs.",
+      type: 'terminal',
+      question: 'Marc veut créer un dossier `projet` et un sous-dossier `code` en une seule fois. Tape la commande correcte.',
+      initialFiles: {},
       validate: (typedCommand, output, fs) => {
         return matchesCommand(typedCommand, 'mkdir -p projet/code') && fsEntryExists(fs, '/projet/code', 'dir');
       },
       expectedCommand: 'mkdir -p projet/code',
-        "`mkdir -p` crée tous les dossiers manquants dans l’arborescence. Pratique pour gagner du temps et éviter des erreurs.",
     },
     {
-      explanation: "`touch fichier` crée un fichier vide si celui-ci n’existe pas déjà, ou met à jour sa date de modification.", type: 'terminal', question: 'Une fois dans `documents`, tape la commande qui crée un fichier vide `note.txt`.', initialFiles: {},
+      explanation: "`touch fichier` crée un fichier vide si celui-ci n’existe pas déjà, ou met à jour sa date de modification.",
+      type: 'terminal',
+      question: 'Une fois dans `documents`, tape la commande qui crée un fichier vide `note.txt`.',
+      initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'touch note.txt') && fsEntryExists(fs, '/note.txt', 'file'),
       expectedCommand: 'touch note.txt',
-        "`touch fichier` crée un fichier vide si celui-ci n’existe pas déjà, ou met à jour sa date de modification.",
     },
     {
       type: 'terminal',
@@ -90,7 +94,7 @@ export const quizzes = {
         return matchesCommand(typedCommand, 'rm -r old_project') && !fsEntryExists(fs, '/old_project');
       },
       expectedCommand: 'rm -r old_project',
-        "`rm -r dossier` supprime le dossier et son contenu récursivement. `rmdir` ne fonctionne que si le dossier est vide.",
+      explanation: "`rm -r dossier` supprime le dossier et son contenu récursivement. `rmdir` ne fonctionne que si le dossier est vide.",
     },
     {
       type: 'terminal',
@@ -172,27 +176,24 @@ export const quizzes = {
     },
     {
       question: 'Tu veux donner au groupe la permission de lecture sur un fichier. Quelle commande est adaptée ?',
-      explanation:
+      explanation: "`chmod g+r fichier` ajoute la permission de lecture au groupe sans toucher aux autres droits.",
       initialFiles: { 'file.txt': '' },
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'chmod g+r file.txt'),
       expectedCommand: 'chmod g+r file.txt',
-        "`chmod g+r fichier` ajoute la permission de lecture au groupe sans toucher aux autres droits.",
     },
     {
       question: 'Quelle commande affiche le propriétaire et le groupe d’un fichier ?',
-      explanation:
+      explanation: "`ls -l` montre déjà le propriétaire et le groupe. Pour plus de détails, on peut aussi utiliser `stat fichier`.",
       initialFiles: { 'file.txt': '' },
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'ls -l file.txt') && output.includes('user group'),
       expectedCommand: 'ls -l file.txt',
-        "`ls -l` montre déjà le propriétaire et le groupe. Pour plus de détails, on peut aussi utiliser `stat fichier`.",
     },
     {
       question: 'Alice veut rendre un script exécutable uniquement pour elle. Quelle commande doit-elle utiliser ?',
-      explanation:
+      explanation: "`chmod u+x` ajoute l’exécution pour l’utilisateur propriétaire seulement, ce qui est plus sûr.",
       initialFiles: { 'script.sh': '' },
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'chmod u+x script.sh'),
       expectedCommand: 'chmod u+x script.sh',
-        "`chmod u+x` ajoute l’exécution pour l’utilisateur propriétaire seulement, ce qui est plus sûr.",
     },
   ],
   5: [
@@ -261,8 +262,7 @@ export const quizzes = {
       expectedCommand: 'kill [PID]',
     },
     {
-      question: 'Vous voulez trouver le PID d’un processus nommé `nginx`. Quelle commande est la plus efficace ?',
-      explanation: '`ps aux` liste tous les processus. Dans un vrai terminal, on utiliserait un pipe avec `grep` pour filtrer : `ps aux | grep nginx`.', type: 'terminal',
+      type: 'terminal',
       question: 'Vous voulez trouver le PID d’un processus nommé `nginx`. Tape la commande la plus efficace (le simulateur ne supporte pas les pipes, donc simule la recherche).',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'ps aux') && output.includes('nginx'), // Simplified for simulator

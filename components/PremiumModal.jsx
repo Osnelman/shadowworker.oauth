@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { usePremium } from '../context/PremiumContext';
 import { useNotification } from '../context/NotificationContext';
 import { PREMIUM_AMOUNT } from '../data/config'; // Import the centralized amount
-import Kkiapay from 'kkiapay-react';
+import { useKKiaPay } from 'kkiapay-react';
 
 export default function PremiumModal({ onClose }) {
   const { user } = useAuth();
@@ -11,6 +11,7 @@ export default function PremiumModal({ onClose }) {
   const { addNotification } = useNotification();
   const [paymentProcessing, setPaymentProcessing] = useState(false);
   const [paymentError, setPaymentError] = useState(null);
+  const { openKkiapayWidget, addSuccessListener, addKkiapayCloseListener } = useKKiaPay();
 
   const KKIAPAY_PUBLIC_KEY = import.meta.env.VITE_KKIAPAY_PUBLIC_KEY;
   const KKIAPAY_SANDBOX = import.meta.env.VITE_KKIAPAY_SANDBOX === 'true';
@@ -35,8 +36,34 @@ export default function PremiumModal({ onClose }) {
     }
   };
 
-  const handleKkiapayFailure = (error) => {
+  const handleKkiapayFailure = () => {
     setPaymentError('Le paiement a été annulé ou a échoué. Veuillez réessayer.');
+    setPaymentProcessing(false);
+  };
+
+  useEffect(() => {
+    const unsubscribeSuccess = addSuccessListener((response) => {
+      handleKkiapaySuccess(response);
+    });
+
+    const unsubscribeClose = addKkiapayCloseListener(() => {
+      handleKkiapayFailure();
+    });
+
+    return () => {
+      unsubscribeSuccess?.();
+      unsubscribeClose?.();
+    };
+  }, [addSuccessListener, addKkiapayCloseListener]);
+
+  const handlePurchase = () => {
+    setPaymentError(null);
+    setPaymentProcessing(true);
+    openKkiapayWidget({
+      amount: PREMIUM_AMOUNT,
+      key: KKIAPAY_PUBLIC_KEY,
+      sandbox: KKIAPAY_SANDBOX,
+    });
   };
 
   if (!user || user.isGuest) {
@@ -75,19 +102,9 @@ export default function PremiumModal({ onClose }) {
           </div>
         )}
 
-        <Kkiapay
-          amount={PREMIUM_AMOUNT}
-          callback={handleKkiapaySuccess}
-          close={handleKkiapayFailure}
-          publicKey={KKIAPAY_PUBLIC_KEY}
-          sandbox={KKIAPAY_SANDBOX}
-          theme="#ffb347" // Match your amber theme
-          data={{ userId: user.id, premiumType: 'full_access' }}
-        >
-          <button className="btn btn-primary" disabled={paymentProcessing}>
-            {paymentProcessing ? 'Traitement...' : `Payer ${PREMIUM_AMOUNT} XOF`}
-          </button>
-        </Kkiapay>
+        <button className="btn btn-primary" onClick={handlePurchase} disabled={paymentProcessing || !KKIAPAY_PUBLIC_KEY}>
+          {paymentProcessing ? 'Traitement...' : `Payer ${PREMIUM_AMOUNT} XOF`}
+        </button>
 
         <button className="btn btn-secondary" onClick={onClose} style={{ marginTop: '15px' }}>
           Annuler
