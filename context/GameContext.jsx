@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { useAuth } from './AuthContext'
 import { lessonIds } from '../data/lessons'
+import { getUserTitle, getUserTitleProgress } from '../src/utils/userTitles'
 import firstStepBadge from '../icons8-premiere-96.png'
 import linuxBadge from '../icons8-linux-50.png'
 import { useSound } from './SoundContext'
@@ -453,6 +454,11 @@ export function GameProvider({ children }) {
   const currentLevelThreshold = getXpForLevel(level)
   const levelProgress = currentLevelThreshold > 0 ? Math.round((xpIntoCurrentLevel / currentLevelThreshold) * 100) : 0
   const rank = computeRank(xp)
+  const userTitleProgress = getUserTitleProgress(completedLessons.length)
+  const userTitle = userTitleProgress.currentTitle
+  const nextUserTitle = userTitleProgress.nextTitle
+  const userTitleProgressPercent = userTitleProgress.progress
+  const lessonsToNextTitle = userTitleProgress.lessonsNeeded
 
   return (
     <GameContext.Provider
@@ -463,6 +469,10 @@ export function GameProvider({ children }) {
         xpToNextLevel,
         levelProgress,
         rank,
+        userTitle,
+        nextUserTitle,
+        userTitleProgress: userTitleProgressPercent,
+        lessonsToNextTitle,
         recentXpGain,
         levelUpEvent,
         lessonCompletedEvent, // Expose lesson completed event

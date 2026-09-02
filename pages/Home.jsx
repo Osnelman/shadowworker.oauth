@@ -10,7 +10,7 @@ import PremiumModal from '../components/PremiumModal'
 
 export default function Home() {
   const navigate = useNavigate()
-  const { xp, level, levelProgress, rank, lives, completedLessons, dailyMissionCompleted, loginStreak, nextLifeAt, MAX_LIVES } = useGame()
+  const { xp, level, levelProgress, rank, userTitle, nextUserTitle, userTitleProgress, lessonsToNextTitle, lives, completedLessons, dailyMissionCompleted, loginStreak, nextLifeAt, MAX_LIVES } = useGame()
   const { user } = useAuth()
   const nextLesson = lessonIds.find((id) => !completedLessons.includes(id)) || lessonIds[lessonIds.length - 1]
   const [timeLeft, setTimeLeft] = useState(null)
@@ -85,12 +85,16 @@ export default function Home() {
             <p>Continue l’aventure et débloque la prochaine étape du parcours.</p>
           </div>
           <div className="quick-panel">
-            <span className="quick-kicker">Progression</span>
-            <h3>{rank}</h3>
+            <span className="quick-kicker">Grade</span>
+            <h3>{userTitle}</h3>
             <div className="progress-bar">
-              <div className="progress-fill" style={{ width: `${levelProgress}%` }} />
+              <div className="progress-fill" style={{ width: `${userTitleProgress}%` }} />
             </div>
-            <p className="muted">{levelProgress}% vers le niveau suivant</p>
+            <p className="muted">
+              {nextUserTitle
+                ? `${lessonsToNextTitle} leçon${lessonsToNextTitle > 1 ? 's' : ''} avant ${nextUserTitle}`
+                : 'Grade maximum atteint'}
+            </p>
           </div>
         </div>
 

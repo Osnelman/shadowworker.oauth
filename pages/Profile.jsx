@@ -9,7 +9,7 @@ import BackButton from '../components/BackButton'
 export default function Profile() {
   const navigate = useNavigate()
   const { user } = useAuth()
-  const { xp, level, levelProgress, rank, loginStreak, unlockedBadges, BADGES, progressHistory } = useGame()
+  const { xp, level, levelProgress, rank, userTitle, loginStreak, unlockedBadges, BADGES, progressHistory } = useGame()
 
   if (!user) {
     navigate('/login')
@@ -56,7 +56,7 @@ export default function Profile() {
         <div className="profile-stats-card card">
           <h3>Statistiques</h3>
           <div className="stats-grid-profile">
-            <div><strong>Niveau {level}</strong><p>{rank}</p></div>
+            <div><strong>{userTitle}</strong><p>{rank}</p></div>
             <div><strong>⚡ {xp}</strong><p>XP Total</p></div>
             <div><strong>🔥 {loginStreak}</strong><p>Série de jours</p></div>
           </div>

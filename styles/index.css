@@ -114,7 +114,7 @@ body::before {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(4, 7, 13, 0.1), rgba(4, 7, 13, 0.28));
+  background: linear-gradient(180deg, rgba(4, 7, 13, 0.04), rgba(4, 7, 13, 0.12));
 }
 
 
@@ -210,31 +210,37 @@ code {
   width: min(1100px, calc(100% - 32px));
   margin: 0 auto 28px;
   padding: 28px 28px 18px;
-  border: 1px solid rgba(148, 163, 184, 0.18);
+  border: 1px solid rgba(148, 163, 184, 0.15);
   border-radius: 26px;
-  background: linear-gradient(180deg, rgba(12, 18, 28, 0.94), rgba(9, 12, 20, 0.9));
-  box-shadow: 0 24px 70px rgba(4, 7, 13, 0.24);
+  background: linear-gradient(180deg, rgba(12, 18, 28, 0.92), rgba(9, 12, 20, 0.88));
+  box-shadow: 0 24px 70px rgba(4, 7, 13, 0.22);
+  backdrop-filter: blur(10px);
 }
 
 .site-footer-inner {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  grid-template-columns: 1.6fr 1fr 1.2fr;
   gap: 24px;
+  align-items: start;
 }
 
 .site-footer-brand {
-  max-width: 260px;
+  max-width: 320px;
 }
 
 .site-footer-badge {
   display: inline-flex;
-  margin-bottom: 10px;
-  padding: 8px 12px;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 8px 14px;
   border-radius: 999px;
-  background: linear-gradient(135deg, rgba(155, 92, 255, 0.12), rgba(61, 217, 255, 0.12));
+  background: linear-gradient(135deg, rgba(155, 92, 255, 0.13), rgba(61, 217, 255, 0.12));
+  border: 1px solid rgba(96, 165, 250, 0.18);
   color: var(--cyan);
   font-weight: 800;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .site-footer-brand p,
@@ -243,11 +249,16 @@ code {
   color: #cbd5e1;
 }
 
+.site-footer-brand p {
+  line-height: 1.7;
+  font-size: 0.96rem;
+}
+
 .site-footer-column h4 {
   margin-bottom: 12px;
   color: var(--text);
-  font-size: 0.92rem;
-  letter-spacing: 0.06em;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -259,18 +270,44 @@ code {
   margin: 0;
 }
 
+.site-footer-column li {
+  font-size: 0.94rem;
+}
+
 .site-footer-column a {
   color: #e2e8f0;
+  transition: color 180ms ease, opacity 180ms ease;
+}
+
+.site-footer-column a:hover {
+  color: var(--cyan);
 }
 
 .site-footer-bottom {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 12px;
   margin-top: 24px;
   padding-top: 16px;
   border-top: 1px solid rgba(148, 163, 184, 0.12);
   font-size: 0.8rem;
+  color: #dbeafe;
+}
+
+@media (max-width: 720px) {
+  .site-footer {
+    padding: 22px 18px 16px;
+  }
+
+  .site-footer-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .site-footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 .mission-shell {
@@ -439,7 +476,7 @@ code {
   position: absolute;
   border-radius: 50%;
   filter: blur(12px);
-  opacity: 0.4;
+  opacity: 0.14;
   animation: floatOrb 10s ease-in-out infinite;
 }
 
@@ -669,6 +706,7 @@ label {
 .home-actions,
 .home-secondary-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
 }
 
@@ -682,7 +720,8 @@ label {
 
 .home-actions > *,
 .home-secondary-actions > * {
-  flex: 1;
+  flex: 1 1 min(220px, 100%);
+  min-width: 0;
 }
 
 .hero-card {
@@ -702,8 +741,9 @@ label {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(155, 92, 255, 0.08), transparent 35%, rgba(61, 217, 255, 0.06));
+  background: linear-gradient(135deg, rgba(155, 92, 255, 0.04), transparent 38%, rgba(61, 217, 255, 0.03));
   pointer-events: none;
+  opacity: 0.7;
 }
 
 .hero-card > *,
@@ -987,6 +1027,22 @@ label {
   }
   .adventure-node { margin: 0; }
   .adventure-label { margin-top: 0; }
+
+  .home-actions,
+  .home-secondary-actions {
+    flex-direction: column;
+  }
+
+  .home-actions > *,
+  .home-secondary-actions > * {
+    flex-basis: 100%;
+    width: 100%;
+  }
+
+  .btn {
+    width: 100%;
+    min-width: 0;
+  }
 }
 
 .daily-mission-page { display: grid; place-items: center; }
@@ -998,11 +1054,11 @@ label {
 .daily-complete { margin: 22px 0; padding: 16px; border-radius: 14px; color: #bbf7d0; background: rgba(34, 197, 94, 0.12); }
 
 .card {
-  background: linear-gradient(180deg, rgba(17, 24, 39, 0.9), rgba(12, 18, 29, 0.86));
-  border: 1px solid var(--border-strong);
-  border-radius: 28px;
-  box-shadow: var(--shadow-soft);
-  padding: 32px;
+  background: linear-gradient(180deg, rgba(17, 24, 39, 0.88), rgba(12, 18, 29, 0.9));
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  border-radius: 22px;
+  box-shadow: 0 18px 44px rgba(2, 6, 23, 0.24);
+  padding: 28px;
   position: relative;
   overflow: hidden;
 }
@@ -1137,63 +1193,59 @@ p {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 16px 24px;
-  border-radius: 18px;
-  transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+  gap: 8px;
+  min-width: clamp(140px, 16vw, 160px);
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: clamp(0.86rem, 1.2vw, 0.98rem);
+  font-weight: 700;
+  line-height: 1.2;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease, opacity 0.18s ease;
+  border: 1px solid transparent;
+  white-space: nowrap;
 }
 
-.btn::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 6px; /* Initial "3D" depth */
-  border-radius: 0 0 18px 18px;
-  transition: height 0.1s ease, transform 0.1s ease;
+.btn--wide {
+  min-width: clamp(160px, 22vw, 220px);
+  padding-left: 22px;
+  padding-right: 22px;
 }
 
-/* Base button hover effect */
+.btn--full {
+  width: 100%;
+  min-width: 0;
+}
+
 .btn:hover {
   transform: translateY(-1px);
+  filter: brightness(1.02);
+}
+
+.btn:active {
+  transform: translateY(0);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, rgba(255, 179, 71, 0.95), rgba(255, 147, 30, 0.95));
-  color: #0f0b03;
-  font-weight: 700;
-  position: relative; /* Needed for ::after pseudo-element */
-  border: none; /* Remove default border */
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #ea580c 100%);
+  color: #1f1203;
+  box-shadow: 0 14px 28px rgba(245, 158, 11, 0.26);
+  border-color: rgba(251, 191, 36, 0.35);
 }
 
-.btn-primary::after {
-  background: rgba(209, 138, 0, 0.8); /* Darker amber for depth */
+.btn-primary:hover {
+  box-shadow: 0 16px 30px rgba(245, 158, 11, 0.32);
 }
-
-.btn-primary:active {
-  transform: translateY(2px); /* Simulate press */
-}
-
-.btn-primary:active::after {
-  height: 2px; /* Reduce depth on press */
-  transform: translateY(2px);
-}
-
 
 .btn-secondary {
-  background: rgba(255, 179, 71, 0.08);
-  color: #f8f8f2;
-  border: 1px solid rgba(255, 179, 71, 0.2);
-  position: relative; /* Needed for ::after pseudo-element */
+  background: rgba(251, 191, 36, 0.08);
+  color: #f8fafc;
+  border-color: rgba(251, 191, 36, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-.btn-secondary::after {
-  background: rgba(255, 179, 71, 0.05); /* Slightly darker for depth */
-}
-
-.btn-secondary:active {
-  transform: translateY(2px);
+.btn-secondary:hover {
+  background: rgba(251, 191, 36, 0.12);
 }
 
 .course-overview ul {
@@ -2146,69 +2198,6 @@ p {
   display: block;
   font-size: 2rem;
   color: #f8fafc;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 16px 24px;
-  border-radius: 18px;
-  transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease;
-}
-
-.btn::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 6px; /* Initial "3D" depth */
-  border-radius: 0 0 18px 18px;
-  transition: height 0.1s ease, transform 0.1s ease;
-}
-
-/* Base button hover effect */
-.btn:hover {
-  transform: translateY(-1px);
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, rgba(255, 179, 71, 0.95), rgba(255, 147, 30, 0.95));
-  color: #0f0b03;
-  font-weight: 700;
-  position: relative; /* Needed for ::after pseudo-element */
-  border: none; /* Remove default border */
-}
-
-.btn-primary::after {
-  background: rgba(209, 138, 0, 0.8); /* Darker amber for depth */
-}
-
-.btn-primary:active {
-  transform: translateY(2px); /* Simulate press */
-}
-
-.btn-primary:active::after {
-  height: 2px; /* Reduce depth on press */
-  transform: translateY(2px);
-}
-
-
-.btn-secondary {
-  background: rgba(255, 179, 71, 0.08);
-  color: #f8f8f2;
-  border: 1px solid rgba(255, 179, 71, 0.2);
-  position: relative; /* Needed for ::after pseudo-element */
-}
-
-.btn-secondary::after {
-  background: rgba(255, 179, 71, 0.05); /* Slightly darker for depth */
-}
-
-.btn-secondary:active {
-  transform: translateY(2px);
 }
 
 .course-overview ul {

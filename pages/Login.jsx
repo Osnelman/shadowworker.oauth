@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Lottie from 'lottie-react'
 import { useAuth } from '../context/AuthContext'
 import BackButton from '../components/BackButton'
-import linuxIcon from '../icons8-linux-50.png'
+import learningAnimation from '../Learning.json'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -32,13 +33,11 @@ export default function Login() {
 
   return (
     <main className="page login-shell" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
-      <div style={{ position: 'absolute', top: 20, left: 20 }}>
-        <BackButton />
-      </div>
-
       <section className="card login-card" style={{ textAlign: 'center' }}>
-        <div style={{ width: 90, height: 90, margin: '0 auto 18px', borderRadius: 24, background: 'linear-gradient(135deg, rgba(124,255,98,0.16), rgba(61,217,255,0.12))', display: 'grid', placeItems: 'center', border: '1px solid rgba(148,163,184,0.18)' }}>
-          <img src={linuxIcon} alt="Linux" style={{ width: 42, height: 42 }} />
+        <div className="login-visual-wrap" aria-hidden="true" style={{ position: 'relative', width: '100%', maxWidth: 360, height: 210, margin: '0 auto 20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="login-lottie-container" style={{ width: 280, height: 180, filter: 'drop-shadow(0 0 28px rgba(34, 211, 238, 0.35))' }}>
+            <Lottie animationData={learningAnimation} loop style={{ width: '100%', height: '100%' }} />
+          </div>
         </div>
 
         <span className="badge" style={{ marginBottom: 10 }}>Linux Quest</span>
@@ -94,9 +93,6 @@ export default function Login() {
         </div>
 
         <div style={{ marginTop: 28, paddingTop: 18, borderTop: '1px solid rgba(148, 163, 184, 0.1)' }}>
-          <p className="muted" style={{ fontSize: '0.85rem', marginBottom: 12 }}>
-            Tu peux aussi continuer en mode invité.
-          </p>
           <button className="btn btn-secondary" onClick={() => { signInGuest(); navigate('/home', { replace: true }) }} style={{ width: '100%', padding: '12px' }}>
             👤 Continuer en mode invité
           </button>

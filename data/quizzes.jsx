@@ -4,107 +4,93 @@ export const quizzes = {
   1: [
     {
       type: 'terminal',
-      question: 'Quelle commande affiche le dossier courant ?',
-    },
-    {
-      type: 'terminal',
-      question: 'Dans le simulateur, tape `pwd` pour afficher le dossier courant.',
-      commands: ['pwd', 'help'],
+      question: 'Tu arrives dans un dossier inconnu. La première chose à faire est de vérifier où tu te trouves. Utilise la commande qui affiche le chemin du dossier courant.',
       initialFiles: {},
-      expected: 'pwd',
-      explanation: 'Dans un vrai terminal, `pwd` affiche le chemin du répertoire courant. C’est le bon réflexe pour se repérer.',
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'pwd'),
       expectedCommand: 'pwd',
+      explanation: 'La commande `pwd` affiche le chemin absolu du dossier courant. C’est l’outil le plus simple pour savoir où tu es dans l’arborescence.',
     },
     {
       type: 'terminal',
-      question: 'Tom cherche son dossier personnel. Tape la commande qui lui permet d’y aller rapidement.',
-      initialFiles: {},
-      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'cd ~', 'cd /home/user'), // Assuming 'user' is the default user in simulator
-      expectedCommand: 'cd ~',
-      explanation: "`cd ~` vous envoie dans votre dossier personnel. C’est la manière la plus simple de revenir à la base quand on est perdu.",
-    },
-    {
-      type: 'terminal',
-      question: 'Tape la commande `ls` avec l\'option qui montre aussi les fichiers cachés.',
+      question: 'Tu veux vérifier ton espace de travail et tu notices qu’il y a aussi des fichiers cachés. Affiche le contenu du dossier courant en incluant les éléments cachés.',
       initialFiles: { '.hidden_file': '' },
       validate: (typedCommand, output, fs) => {
-        const normalized = normalizeCommand(typedCommand);
-        return normalized.startsWith('ls') && (normalized.includes('-a') || normalized.includes('-l -a'));
+        const normalized = normalizeCommand(typedCommand)
+        return normalized.startsWith('ls') && (normalized.includes('-a') || normalized.includes('-l -a'))
       },
       expectedCommand: 'ls -a',
-      explanation: "`ls -a` affiche tous les fichiers, y compris ceux dont le nom commence par `.`. Très utile pour voir les fichiers de configuration cachés.",
+      explanation: '`ls -a` affiche tous les fichiers, y compris les fichiers cachés qui commencent par `.`. C’est souvent le premier réflexe pour repérer les fichiers de configuration.',
     },
     {
       type: 'terminal',
-      question: 'Tu veux voir uniquement les noms de fichiers dans le dossier courant. Tape la commande que tu utilises.',
-      initialFiles: { 'file1.txt': '', 'folder1': { type: 'dir' } },
-      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'ls'),
-      expectedCommand: 'ls',
-      explanation: "`ls` liste simplement les fichiers et dossiers du répertoire courant. C’est la commande basique pour explorer un répertoire.",
+      question: 'Tu veux te rendre directement dans ton dossier personnel pour reprendre ton travail. Va vers le bon emplacement.',
+      initialFiles: {},
+      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'cd ~', 'cd /home/user'),
+      expectedCommand: 'cd ~',
+      explanation: '`cd ~` te ramène directement dans ton dossier personnel. C’est le raccourci le plus utile pour repartir de la base.',
     },
     {
       type: 'terminal',
-      question: 'Tape la commande `ls` avec l\'option qui liste les fichiers avec détails et permissions.',
+      question: 'Tu veux voir les fichiers du dossier avec leurs permissions, leur propriétaire et leur taille. Affiche la liste détaillée.',
       initialFiles: { 'file.txt': '' },
       validate: (typedCommand, output, fs) => {
-        const normalized = normalizeCommand(typedCommand);
-        return normalized.startsWith('ls') && (normalized.includes('-l') || normalized.includes('-a -l'));
+        const normalized = normalizeCommand(typedCommand)
+        return normalized.startsWith('ls') && (normalized.includes('-l') || normalized.includes('-a -l'))
       },
       expectedCommand: 'ls -l',
-      explanation: "`ls -l` affiche le contenu avec permissions, proprietaire, taille et date. Pratique pour vérifier rapidement qui peut lire ou modifier un fichier.",
+      explanation: '`ls -l` montre les détails utiles : permissions, propriétaire, taille et date. C’est la commande la plus fiable pour inspecter un dossier rapidement.',
     },
   ],
   2: [
     {
       type: 'terminal',
-      question: 'Quelle commande crée un dossier ?', explanation: "`mkdir nom_dossier` crée un répertoire. Pour créer des arborescences, utilisez `mkdir -p parent/enfant`.", validate: (typedCommand, output, fs) => { const { cmd, args } = parseCommand(typedCommand); return cmd === 'mkdir' && args.length > 0 && fsEntryExists(fs, `/${args[0]}`, 'dir');
-      },
-      expectedCommand: 'mkdir nom_dossier',
-    },
-    {
-      type: 'terminal',
-      question: 'Comment supprimer un fichier ?', explanation: "`rm fichier` supprime un fichier. Attention : c'est définitif (sauf avec des sauvegardes). Pour supprimer des dossiers, utilisez `rm -r`.", initialFiles: { 'file_to_delete.txt': '' }, validate: (typedCommand, output, fs) => { const { cmd, args } = parseCommand(typedCommand); return cmd === 'rm' && args.includes('file_to_delete.txt') && !fsEntryExists(fs, '/file_to_delete.txt');
-      },
-      expectedCommand: 'rm file_to_delete.txt',
-    },
-    {
-      explanation: "`mkdir -p` crée tous les dossiers manquants dans l’arborescence. Pratique pour gagner du temps et éviter des erreurs.",
-      type: 'terminal',
-      question: 'Marc veut créer un dossier `projet` et un sous-dossier `code` en une seule fois. Tape la commande correcte.',
+      question: 'Tu crées un nouveau projet et tu dois préparer le dossier de travail. Crée un répertoire nommé `projet` puis vérifie qu’il existe bien.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => {
-        return matchesCommand(typedCommand, 'mkdir -p projet/code') && fsEntryExists(fs, '/projet/code', 'dir');
+        const { cmd, args } = parseCommand(typedCommand)
+        return cmd === 'mkdir' && args.includes('projet') && fsEntryExists(fs, '/projet', 'dir')
+      },
+      expectedCommand: 'mkdir projet',
+      explanation: '`mkdir projet` crée le dossier. Ensuite, tu peux utiliser `ls` pour vérifier qu’il apparaît bien dans le dossier courant.',
+    },
+    {
+      type: 'terminal',
+      question: 'Un ancien dossier de test ne te sert plus. Supprime le répertoire `old_project` avec tout son contenu pour nettoyer l’espace de travail.',
+      initialFiles: { 'old_project/file.txt': '' },
+      validate: (typedCommand, output, fs) => {
+        return matchesCommand(typedCommand, 'rm -r old_project') && !fsEntryExists(fs, '/old_project')
+      },
+      expectedCommand: 'rm -r old_project',
+      explanation: '`rm -r dossier` supprime un dossier et tout ce qu’il contient. C’est la bonne commande quand il faut nettoyer un projet obsolète.',
+    },
+    {
+      explanation: '`mkdir -p` crée tous les dossiers manquants dans l’arborescence. C’est le bon réflexe quand tu veux créer rapidement une structure complète.',
+      type: 'terminal',
+      question: 'Tu veux organiser un petit projet avec un sous-dossier `code` sans créer chaque dossier manuellement. Crée la structure complète en une seule commande.',
+      initialFiles: {},
+      validate: (typedCommand, output, fs) => {
+        return matchesCommand(typedCommand, 'mkdir -p projet/code') && fsEntryExists(fs, '/projet/code', 'dir')
       },
       expectedCommand: 'mkdir -p projet/code',
     },
     {
-      explanation: "`touch fichier` crée un fichier vide si celui-ci n’existe pas déjà, ou met à jour sa date de modification.",
+      explanation: '`touch fichier` crée un fichier vide s’il n’existe pas déjà. C’est pratique pour démarrer rapidement un document ou un script.',
       type: 'terminal',
-      question: 'Une fois dans `documents`, tape la commande qui crée un fichier vide `note.txt`.',
+      question: 'Tu dois préparer un fichier de notes dans le dossier courant. Crée `note.txt` sans écrire de contenu dedans.',
       initialFiles: {},
       validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'touch note.txt') && fsEntryExists(fs, '/note.txt', 'file'),
       expectedCommand: 'touch note.txt',
     },
     {
       type: 'terminal',
-      question: 'Tu dois supprimer un dossier appelé `old_project` et tous ses fichiers. Tape la commande que tu utilises.',
-      initialFiles: { 'old_project/file.txt': '' },
+      question: 'Tu as fini de travailler sur un fichier inutile. Supprime proprement `file_to_delete.txt` et vérifie qu’il disparaît bien du dossier.',
+      initialFiles: { 'file_to_delete.txt': '' },
       validate: (typedCommand, output, fs) => {
-        return matchesCommand(typedCommand, 'rm -r old_project') && !fsEntryExists(fs, '/old_project');
+        const { cmd, args } = parseCommand(typedCommand)
+        return cmd === 'rm' && args.includes('file_to_delete.txt') && !fsEntryExists(fs, '/file_to_delete.txt')
       },
-      expectedCommand: 'rm -r old_project',
-      explanation: "`rm -r dossier` supprime le dossier et son contenu récursivement. `rmdir` ne fonctionne que si le dossier est vide.",
-    },
-    {
-      type: 'terminal',
-      question: 'Crée un fichier `note.txt` dans le dossier courant en utilisant la ligne de commande.',
-      commands: ['touch', 'ls', 'cat', 'help'],
-      initialFiles: {},
-      expected: 'file:note.txt',
-      validate: (typedCommand, output, fs) => matchesCommand(typedCommand, 'touch note.txt') && fsEntryExists(fs, '/note.txt', 'file'),
-      expectedCommand: 'touch note.txt',
-      explanation: 'Utilise `touch note.txt` pour créer un fichier vide. Vérifie ensuite avec `ls` ou `cat`.',
+      expectedCommand: 'rm file_to_delete.txt',
+      explanation: '`rm fichier` supprime un fichier. C’est utile quand tu nettoies des documents inutiles ou des fichiers temporaires.',
     },
   ],
   3: [
