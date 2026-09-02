@@ -4,7 +4,6 @@ import { useGame } from '../context/GameContext'
 import { useSpring, animated } from '@react-spring/web'
 import { useAuth } from '../context/AuthContext'
 import ProfileCorner from '../components/ProfileCorner'
-import BrandLogo from '../components/BrandLogo'
 import { lessons, lessonIds } from '../data/lessons'
 import { usePremium } from '../context/PremiumContext'
 import PremiumModal from '../components/PremiumModal'
@@ -52,7 +51,6 @@ export default function Home() {
       <ProfileCorner />
 
       <section className="hero-card card home-hero">
-        <div className="brand-logo-wrap"><BrandLogo /></div>
         <div className="home-hero-top">
           <div>
             <span className="badge">Linux Quest</span>

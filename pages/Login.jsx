@@ -1,23 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Lottie from 'lottie-react'
 import { useAuth } from '../context/AuthContext'
-import learningAnimation from '../Learning.json'
-import fireStreakAnimation from '../Fire Streak.json'
-import { useLocation } from 'react-router-dom'
 import BackButton from '../components/BackButton'
-import BrandLogo from '../components/BrandLogo'
 import linuxIcon from '../icons8-linux-50.png'
-import fireIcon from '../icons8-fire.gif'
-import trophyIcon from '../icons8-trophy-48.png'
 
 export default function Login() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [googleRenderFailed, setGoogleRenderFailed] = useState(false)
   const { ready, googleAvailable, authError, signInWithEmail, signInGuest, renderGoogleButton, signIn, user } = useAuth()
-  const location = useLocation();
-  const fromPremium = location.state?.fromPremium;
 
   useEffect(() => {
     if (ready && user && !user.isGuest) {
@@ -41,42 +32,19 @@ export default function Login() {
 
   return (
     <main className="page login-shell" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
-      <div className="login-orb orb-one" aria-hidden="true" />
-      <div className="login-orb orb-two" aria-hidden="true" />
-
-      <div className="login-floating-badge badge-left" aria-hidden="true">
-        <img src={fireIcon} alt="" />
-        <span>Streak 7</span>
-      </div>
-
-      <div className="login-floating-badge badge-right" aria-hidden="true">
-        <img src={trophyIcon} alt="" />
-        <span>XP +120</span>
-      </div>
-
       <div style={{ position: 'absolute', top: 20, left: 20 }}>
         <BackButton />
       </div>
+
       <section className="card login-card" style={{ textAlign: 'center' }}>
-        <div className="login-visual-wrap" aria-hidden="true">
-          <div className="login-visual-badge">
-            <img src={linuxIcon} alt="" />
-          </div>
-          <div className="login-lottie-container">
-            <Lottie animationData={learningAnimation} loop />
-          </div>
-          <div className="login-mini-animation">
-            <Lottie animationData={fireStreakAnimation} loop />
-          </div>
+        <div style={{ width: 90, height: 90, margin: '0 auto 18px', borderRadius: 24, background: 'linear-gradient(135deg, rgba(124,255,98,0.16), rgba(61,217,255,0.12))', display: 'grid', placeItems: 'center', border: '1px solid rgba(148,163,184,0.18)' }}>
+          <img src={linuxIcon} alt="Linux" style={{ width: 42, height: 42 }} />
         </div>
 
-        <div style={{ marginBottom: 18 }}>
-          <BrandLogo compact />
-        </div>
-
-        <h1 style={{ marginBottom: 12 }}>Bienvenue sur Shadowworker</h1>
-        <p className="muted" style={{ marginBottom: 32 }}>
-          Apprends Linux en t'amusant. Connecte-toi pour sauvegarder ta progression.
+        <span className="badge" style={{ marginBottom: 10 }}>Linux Quest</span>
+        <h1 style={{ marginBottom: 12 }}>Bienvenue</h1>
+        <p className="muted" style={{ marginBottom: 28 }}>
+          Connecte-toi pour sauvegarder ta progression et reprendre ton parcours.
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -102,7 +70,7 @@ export default function Login() {
             </div>
           )}
 
-          <div style={{ position: 'relative', margin: '20px 0' }}>
+          <div style={{ position: 'relative', margin: '10px 0' }}>
             <div style={{ borderTop: '1px solid rgba(148, 163, 184, 0.2)' }} />
             <span style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(4, 7, 13, 0.98)', padding: '0 12px', color: '#94a3b8', fontSize: '0.9rem' }}>
               ou
@@ -125,9 +93,9 @@ export default function Login() {
           </form>
         </div>
 
-        <div style={{ marginTop: 32, paddingTop: 20, borderTop: '1px solid rgba(148, 163, 184, 0.1)' }}>
+        <div style={{ marginTop: 28, paddingTop: 18, borderTop: '1px solid rgba(148, 163, 184, 0.1)' }}>
           <p className="muted" style={{ fontSize: '0.85rem', marginBottom: 12 }}>
-            Tu peux aussi continuer en mode invité (ta progression sera locale).
+            Tu peux aussi continuer en mode invité.
           </p>
           <button className="btn btn-secondary" onClick={() => { signInGuest(); navigate('/home', { replace: true }) }} style={{ width: '100%', padding: '12px' }}>
             👤 Continuer en mode invité
