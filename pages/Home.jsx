@@ -4,6 +4,7 @@ import { useGame } from '../context/GameContext'
 import { useSpring, animated } from '@react-spring/web'
 import { useAuth } from '../context/AuthContext'
 import ProfileCorner from '../components/ProfileCorner'
+import BrandLogo from '../components/BrandLogo'
 import { lessons, lessonIds } from '../data/lessons'
 import { usePremium } from '../context/PremiumContext'
 import PremiumModal from '../components/PremiumModal'
@@ -47,20 +48,24 @@ export default function Home() {
   // Les invités peuvent accéder à Home aussi (ProfileCorner les affiche pas)
 
   return (
-    <main className="page hero">
+    <main className="page hero home-shell">
       <ProfileCorner />
 
-      <section className="hero-card card">
-        <div style={{ marginBottom: 16 }}>
-          <span className="badge">Linux Quest</span>
+      <section className="hero-card card home-hero">
+        <div className="brand-logo-wrap"><BrandLogo /></div>
+        <div className="home-hero-top">
+          <div>
+            <span className="badge">Linux Quest</span>
+            <h1>{user?.isGuest ? 'Apprends Linux en jouant' : `Prêt pour la suite, ${user?.name?.split(' ')[0] || 'aventurier'} ?`}</h1>
+          </div>
+          <div className="home-level-badge">Niveau {level}</div>
         </div>
 
-        <h1>{user?.isGuest ? 'Apprends Linux en jouant' : `Prêt pour la suite, ${user?.name?.split(' ')[0] || 'aventurier'} ?`}</h1>
-        <p>
+        <p className="home-hero-copy">
           Découvre les commandes pas à pas, gagne de l'XP et progresse dans ton aventure.
         </p>
 
-        <div className="stats-grid">
+        <div className="stats-grid home-stats">
           <div>
             <strong>⚡ {xp}</strong>
             <p>XP acquis</p>
@@ -74,29 +79,39 @@ export default function Home() {
             <p>Leçons terminées</p>
           </div>
         </div>
-        <div className="xp-summary">
-          <div className="xp-title">
-            <span>⚡ Niveau {level}</span>
-            <strong>{rank}</strong>
+
+        <div className="home-quick-grid">
+          <div className="quick-panel quick-panel-primary">
+            <span className="quick-kicker">Prochaine mission</span>
+            <h3>Leçon {nextLesson}</h3>
+            <p>Continue l’aventure et débloque la prochaine étape du parcours.</p>
           </div>
-          <div className="progress-bar">
-            <div className="progress-fill" style={{ width: `${levelProgress}%` }} />
+          <div className="quick-panel">
+            <span className="quick-kicker">Progression</span>
+            <h3>{rank}</h3>
+            <div className="progress-bar">
+              <div className="progress-fill" style={{ width: `${levelProgress}%` }} />
+            </div>
+            <p className="muted">{levelProgress}% vers le niveau suivant</p>
           </div>
-          <p className="muted">{levelProgress}% vers le niveau suivant</p>
         </div>
-        <button className="btn btn-primary" onClick={() => navigate(`/course/${nextLesson}`)}>
-          {completedLessons.length === lessonIds.length ? 'Revoir la dernière leçon' : `Continuer : leçon ${nextLesson}`}
-        </button>
-        {user?.isGuest && (
-          <button className="btn btn-secondary" onClick={() => navigate('/login')} style={{ marginTop: 12 }}>
-            🔐 Se connecter pour sauvegarder
+
+        <div className="home-actions">
+          <button className="btn btn-primary" onClick={() => navigate(`/course/${nextLesson}`)}>
+            {completedLessons.length === lessonIds.length ? 'Revoir la dernière leçon' : `Continuer : leçon ${nextLesson}`}
           </button>
-        )}
-        <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
-          <button className="btn btn-secondary" onClick={() => navigate('/progress')} style={{ flex: 1 }}>
+          {user?.isGuest && (
+            <button className="btn btn-secondary" onClick={() => navigate('/login')}>
+              🔐 Se connecter
+            </button>
+          )}
+        </div>
+
+        <div className="home-secondary-actions">
+          <button className="btn btn-secondary" onClick={() => navigate('/progress')}>
             📊 Progression
           </button>
-          <button className="btn btn-secondary" onClick={() => navigate('/badges')} style={{ flex: 1 }}>
+          <button className="btn btn-secondary" onClick={() => navigate('/badges')}>
             🎯 Objectifs
           </button>
         </div>

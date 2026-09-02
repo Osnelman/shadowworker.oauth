@@ -7,8 +7,8 @@ import NotificationCenter from './components/NotificationCenter';
 import GameNotificationListener from './components/BadgeNotificationListener'; // Renamed from BadgeNotificationListener
 import { ThemeProvider } from './context/ThemeContext'
 import LevelUpModal from './components/LevelUpModal'
+import SiteFooter from './components/SiteFooter'
 import { SoundProvider } from './context/SoundContext'
-import { PremiumProvider } from './context/PremiumContext';
 
 export default function App() {
   return (
@@ -16,14 +16,13 @@ export default function App() {
       <ThemeProvider>
         <AuthProvider>
           <SoundProvider>
-            <PremiumProvider> {/* PremiumProvider wraps GameProvider */}
-              <GameProvider>
-                <NotificationCenter />
-                <GameNotificationListener />
-                <AppRoutes />
-                <LevelUpModal />
-              </GameProvider>
-            </PremiumProvider>
+            <GameProvider>
+              <NotificationCenter />
+              <GameNotificationListener />
+              <AppRoutes />
+              <SiteFooter />
+              <LevelUpModal />
+            </GameProvider>
           </SoundProvider>
         </AuthProvider>
       </ThemeProvider>

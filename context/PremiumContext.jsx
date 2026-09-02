@@ -1,67 +1,30 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
-import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import { getFunctions, httpsCallable } from 'firebase/functions';
 
-// Firebase configuration from environment variables
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
-};
-
-// Initialize Firebase only once
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const functions = getFunctions(app, import.meta.env.VITE_FIREBASE_FUNCTIONS_REGION);
-
-const PremiumContext = createContext();
+const PremiumContext = createContext(null);
 
 export function PremiumProvider({ children }) {
   const { user, ready: authReady } = useAuth();
-  const [isPremium, setIsPremium] = useState(false);
-  const [premiumLoading, setPremiumLoading] = useState(true);
+  const [isPremium, setIsPremium] = useState(true);
+  const [premiumLoading, setPremiumLoading] = useState(false);
   const [premiumError, setPremiumError] = useState(null);
 
-  const checkPremiumStatus = useCallback(async (userId) => {
-    if (!userId || userId.startsWith('guest-')) {
-      setIsPremium(false);
-      setPremiumLoading(false);
-      return;
-    }
-
-    setPremiumLoading(true);
+  const checkPremiumStatus = useCallback(async () => {
+    setIsPremium(true);
+    setPremiumLoading(false);
     setPremiumError(null);
-    try {
-      const premiumDocRef = doc(db, 'premiumUsers', userId);
-      const premiumDocSnap = await getDoc(premiumDocRef);
+  }, []);
 
-      if (premiumDocSnap.exists() && premiumDocSnap.data().isPremium) {
-        setIsPremium(true);
-      } else {
-        setIsPremium(false);
-      }
-    } catch (err) {
-      console.error("Erreur lors de la vérification du statut premium:", err);
-      setPremiumError("Impossible de vérifier le statut premium.");
-      setIsPremium(false);
-    } finally {
-      setPremiumLoading(false);
-    }
+  const verifyKkiapayPayment = useCallback(async () => {
+    console.info('Kkiapay est désactivé : l’application est entièrement gratuite.');
+    return { data: { success: true, message: 'Accès gratuit activé.' } };
   }, []);
 
   useEffect(() => {
     if (authReady) {
       checkPremiumStatus(user?.id);
     }
-  }, [user?.id, authReady, checkPremiumStatus]);
-
-  const verifyKkiapayPayment = httpsCallable(functions, 'verifyKkiapayPayment');
+  }, [authReady, user?.id, checkPremiumStatus]);
 
   return (
     <PremiumContext.Provider value={{ isPremium, premiumLoading, premiumError, checkPremiumStatus, verifyKkiapayPayment }}>
@@ -72,8 +35,16 @@ export function PremiumProvider({ children }) {
 
 export function usePremium() {
   const context = useContext(PremiumContext);
-  if (context === undefined) {
-    throw new Error('usePremium doit être utilisé à l\'intérieur d\'un PremiumProvider');
+
+  if (!context) {
+    return {
+      isPremium: true,
+      premiumLoading: false,
+      premiumError: null,
+      checkPremiumStatus: async () => {},
+      verifyKkiapayPayment: async () => ({ data: { success: true } }),
+    };
   }
+
   return context;
 }

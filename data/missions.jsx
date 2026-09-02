@@ -14,37 +14,66 @@ export const missions = {
     },
   },
   security: {
-    title: 'Mission : Trouver le mot de passe caché',
+    title: 'Mission : Incident serveur — accès restreint',
     lessons: [3],
     mission: {
       description:
-        'Un mot de passe secret est caché dans un fichier invisible. Utilise les commandes Linux pour le trouver, puis saisis-le dans le champ prévu.',
+        'Un service local a été bloqué par une mauvaise configuration. Tu dois identifier le fichier caché qui contient la clé d’accès et remettre le système en ordre.',
       tasks: [
-        'Liste les fichiers cachés avec `ls -a`.',
-        'Affiche le contenu du fichier caché en utilisant `cat`.',
-        'Mémorise le mot de passe et saisis-le dans le champ prévu.',
+        'Inspecte le dossier de travail et repère les fichiers cachés.',
+        'Affiche le contenu du fichier caché pour retrouver la clé d’accès.',
+        'Valide le correctif pour rétablir l’accès au service.',
       ],
     },
     challenge: {
+      type: 'incident',
+      title: 'Incident système détecté',
+      scenario: 'Une anomalie de permissions a fermé un accès critique. Un fichier caché contient le secret nécessaire pour restaurer le service.',
+      objective: 'Diagnostiquer la cause, retrouver la clé et rétablir l’accès.',
+      status: 'Accès bloqué',
+      severity: 'high',
+      steps: [
+        'Vérifie les fichiers cachés du dossier.',
+        'Ouvre le fichier secret pour récupérer la clé.',
+        'Confirme la restauration en validant la clé.',
+      ],
       initialFiles: {
         '.secret': 'open-sesame',
       },
       expected: 'open-sesame',
       hint: 'Le mot de passe est dans un fichier caché nommé `.secret`.',
-      prompt: 'Saisis ici le mot de passe trouvé dans le terminal pour valider la mission.',
+      prompt: 'Saisis ici la clé de restauration trouvée dans le terminal.',
+      successText: 'Incident résolu : le service a bien retrouvé son accès sécurisé.',
     },
   },
   permissions: {
-    title: 'Mission : Gestion avancée des permissions',
+    title: 'Mission : Incident déploiement — script bloqué',
     lessons: [4],
     mission: {
       description:
-        'Apprends à protéger un script et à gérer les droits d’accès sur les fichiers.',
+        'Un script de déploiement est bloqué par de mauvaises permissions. Tu dois corriger les droits avant que le système ne refuse l’exécution.',
       tasks: [
-        'Crée un script `deploy.sh` avec `touch deploy.sh`.',
-        'Ajoute les droits d’exécution avec `chmod +x deploy.sh`.',
-        'Vérifie le mode et le propriétaire avec `ls -l deploy.sh`.',
+        'Crée le script `deploy.sh`.',
+        'Rends-le exécutable avec les bons droits.',
+        'Vérifie le mode et valide que le script est prêt à lancer.',
       ],
+    },
+    challenge: {
+      type: 'incident',
+      title: 'Déploiement bloqué',
+      scenario: 'Le script de livraison ne démarre pas parce que les permissions ont été modifiées par erreur.',
+      objective: 'Restaurer les droits d’exécution et relancer le déploiement.',
+      status: 'Script refusé',
+      severity: 'medium',
+      steps: [
+        'Crée le script de déploiement.',
+        'Applique les permissions nécessaires.',
+        'Vérifie l’exécution et valide la reprise.',
+      ],
+      prompt: 'Valide la correction dans le terminal pour relancer le déploiement.',
+      hint: 'La commande clé est `chmod +x deploy.sh`.',
+      expected: 'chmod +x deploy.sh',
+      successText: 'Déploiement relancé : les permissions sont restaurées.',
     },
   },
   search: {
@@ -62,15 +91,32 @@ export const missions = {
   },
   // Nouvelle mission pour la leçon 6 (Gestion des processus)
   process_management: {
-    title: 'Mission : Maîtrise des processus',
+    title: 'Mission : Incident runtime — service saturé',
     lessons: [6],
     mission: {
-      description: 'Identifie et gère les programmes en cours d\'exécution sur ton système Linux.',
+      description: 'Un service tourne en boucle et consomme trop de ressources. Tu dois localiser le processus, le diagnostiquer puis le neutraliser proprement.',
       tasks: [
-        'Liste tous les processus en cours avec `ps aux`.',
-        'Trouve le PID d\'un processus spécifique (simulé, ex: `ps aux | grep nginx`).',
-        'Arrête un processus (simulé, ex: `kill PID`).',
+        'Liste les processus actifs pour repérer l’anomalie.',
+        'Trouve le PID du service perturbé.',
+        'Arrête proprement le processus et confirme la stabilisation.',
       ],
+    },
+    challenge: {
+      type: 'incident',
+      title: 'Saturation du service',
+      scenario: 'Le service de production tourne trop vite et manque de ressources. L’anomalie doit être stoppée avant qu’elle ne dégrade le serveur.',
+      objective: 'Identifier le PID du processus bloquant et le neutraliser proprement.',
+      status: 'Service saturé',
+      severity: 'high',
+      steps: [
+        'Lance la commande de surveillance des processus.',
+        'Repère le mauvais PID.',
+        'Arrête le processus et vérifie le retour.',
+      ],
+      prompt: 'Valide la commande qui a stoppé le service.',
+      hint: 'Le terminal peut simuler `ps aux` puis `kill <PID>`.',
+      expected: 'kill',
+      successText: 'Le service est revenu à un état stable.',
     },
   },
   // Nouvelle mission pour la leçon 7 (Gestion des utilisateurs et groupes)

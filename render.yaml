@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: shadowworker-oauth
+    env: static
+    buildCommand: npm install --legacy-peer-deps && npm run build
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

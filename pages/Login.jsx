@@ -3,8 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import Lottie from 'lottie-react'
 import { useAuth } from '../context/AuthContext'
 import learningAnimation from '../Learning.json'
+import fireStreakAnimation from '../Fire Streak.json'
 import { useLocation } from 'react-router-dom'
 import BackButton from '../components/BackButton'
+import BrandLogo from '../components/BrandLogo'
+import linuxIcon from '../icons8-linux-50.png'
+import fireIcon from '../icons8-fire.gif'
+import trophyIcon from '../icons8-trophy-48.png'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -35,20 +40,41 @@ export default function Login() {
   }
 
   return (
-    <main className="page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+    <main className="page login-shell" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+      <div className="login-orb orb-one" aria-hidden="true" />
+      <div className="login-orb orb-two" aria-hidden="true" />
+
+      <div className="login-floating-badge badge-left" aria-hidden="true">
+        <img src={fireIcon} alt="" />
+        <span>Streak 7</span>
+      </div>
+
+      <div className="login-floating-badge badge-right" aria-hidden="true">
+        <img src={trophyIcon} alt="" />
+        <span>XP +120</span>
+      </div>
+
       <div style={{ position: 'absolute', top: 20, left: 20 }}>
         <BackButton />
       </div>
-      <section className="card login-card" style={{ maxWidth: 420, padding: '48px', textAlign: 'center' }}>
-        <div aria-hidden="true" style={{ width: 180, height: 180, margin: '-32px auto 8px' }}>
-          <Lottie animationData={learningAnimation} loop />
+      <section className="card login-card" style={{ textAlign: 'center' }}>
+        <div className="login-visual-wrap" aria-hidden="true">
+          <div className="login-visual-badge">
+            <img src={linuxIcon} alt="" />
+          </div>
+          <div className="login-lottie-container">
+            <Lottie animationData={learningAnimation} loop />
+          </div>
+          <div className="login-mini-animation">
+            <Lottie animationData={fireStreakAnimation} loop />
+          </div>
         </div>
 
-        <div style={{ marginBottom: 20 }}>
-          <span className="badge" style={{ fontSize: '1.4rem', padding: '12px 24px' }}>🐧 Linux Quest</span>
+        <div style={{ marginBottom: 18 }}>
+          <BrandLogo compact />
         </div>
 
-        <h1 style={{ marginBottom: 12 }}>Bienvenue sur Linux Quest</h1>
+        <h1 style={{ marginBottom: 12 }}>Bienvenue sur Shadowworker</h1>
         <p className="muted" style={{ marginBottom: 32 }}>
           Apprends Linux en t'amusant. Connecte-toi pour sauvegarder ta progression.
         </p>

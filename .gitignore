@@ -4,6 +4,11 @@ node_modules/
 # Build output
 /dist/
 
+# Environment files
+.env
+.env.*
+!.env.example
+
 # Editor and OS files
 .vscode/
 .DS_Store
